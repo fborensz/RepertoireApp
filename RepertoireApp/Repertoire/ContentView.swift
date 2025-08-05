@@ -688,7 +688,7 @@ struct ContactImportView: View {
             }
             .fileImporter(
                 isPresented: $showingDocumentPicker,
-                allowedContentTypes: [.json],
+                allowedContentTypes: [.json, .commaSeparatedText],
                 allowsMultipleSelection: false
             ) { result in
                 handleFileImport(result: result)

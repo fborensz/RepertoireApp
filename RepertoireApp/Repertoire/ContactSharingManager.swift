@@ -3,18 +3,24 @@ import SwiftUI
 import SwiftData
 import UniformTypeIdentifiers
 
-// Définir le type de fichier personnalisé
-extension UTType {
-    static var repertoire: UTType {
-        UTType(exportedAs: "com.repertoire.contact")
-    }
+// Types d'export disponibles
+enum ExportFormat {
+    case text
+    case csv
+    case json
 }
 
 // Structure pour l'export/import des contacts
 struct ContactExportData: Codable {
-    let version: String = "1.0"
-    let exportDate: Date = Date()
+    let version: String
+    let exportDate: Date
     let contact: ContactData
+    
+    init(contact: ContactData) {
+        self.version = "1.0"
+        self.exportDate = Date()
+        self.contact = contact
+    }
     
     struct ContactData: Codable {
         let name: String
@@ -70,34 +76,20 @@ class ContactSharingManager: ObservableObject {
     
     private init() {}
     
-    // Export d'un contact avec format JSON standard
-    func exportContact(_ contact: Contact) -> URL? {
-        do {
-            let exportData = contact.toExportData()
-            let encoder = JSONEncoder()
-            encoder.outputFormatting = .prettyPrinted
-            let jsonData = try encoder.encode(exportData)
-            
-            // Créer un nom de fichier sécurisé avec extension .json pour une meilleure compatibilité
-            let safeName = contact.name.replacingOccurrences(of: " ", with: "_")
-                .replacingOccurrences(of: "/", with: "-")
-                .replacingOccurrences(of: "\\", with: "-")
-                .replacingOccurrences(of: "[^a-zA-Z0-9_-]", with: "", options: .regularExpression)
-            
-            let fileName = "Contact_\(safeName).json"
-            let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
-            
-            try jsonData.write(to: tempURL)
-            return tempURL
-            
-        } catch {
-            print("Erreur lors de l'export: \(error)")
-            return nil
+    // Export selon le format choisi
+    func exportContact(_ contact: Contact, format: ExportFormat) -> (content: Any?, isFile: Bool) {
+        switch format {
+        case .text:
+            return (exportContactAsText(contact), false)
+        case .csv:
+            return (exportContactAsCSV(contact), true)
+        case .json:
+            return (exportContactAsJSON(contact), true)
         }
     }
     
-    // Export avec données texte pour partage facile
-    func exportContactAsText(_ contact: Contact) -> String {
+    // Export en texte lisible
+    private func exportContactAsText(_ contact: Contact) -> String {
         var text = "📋 FICHE CONTACT - RÉPERTOIRE\n"
         text += "================================\n\n"
         text += "👤 NOM: \(contact.name)\n"
@@ -159,22 +151,189 @@ class ContactSharingManager: ObservableObject {
         return text
     }
     
-    // Import d'un contact depuis URL
+    // Export en CSV
+    private func exportContactAsCSV(_ contact: Contact) -> URL? {
+        var csvContent = "Nom,Poste,Telephone,Email,Pays,Region,Vehicule,Loge,Residence_Fiscale,Type_Lieu,Notes\n"
+        
+        if contact.locations.isEmpty {
+            // Contact sans lieu
+            let notes = contact.notes.replacingOccurrences(of: "\"", with: "\"\"")
+            csvContent += "\"\(contact.name)\",\"\(contact.jobTitle)\",\"\(contact.phone)\",\"\(contact.email)\",,,,,,\"\(notes)\"\n"
+        } else {
+            // Une ligne par lieu
+            for location in contact.locations {
+                let notes = contact.notes.replacingOccurrences(of: "\"", with: "\"\"")
+                let lieuType = location.isPrimary ? "Principal" : "Secondaire"
+                let region = location.region ?? ""
+                
+                csvContent += "\"\(contact.name)\",\"\(contact.jobTitle)\",\"\(contact.phone)\",\"\(contact.email)\",\"\(location.country)\",\"\(region)\",\(location.hasVehicle ? "Oui" : "Non"),\(location.isHoused ? "Oui" : "Non"),\(location.isLocalResident ? "Oui" : "Non"),\"\(lieuType)\",\"\(notes)\"\n"
+            }
+        }
+        
+        // Créer le fichier
+        let safeName = contact.name.replacingOccurrences(of: " ", with: "_")
+            .replacingOccurrences(of: "[^a-zA-Z0-9_-]", with: "", options: .regularExpression)
+        
+        let fileName = "Contact_\(safeName).csv"
+        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
+        
+        do {
+            try csvContent.write(to: tempURL, atomically: true, encoding: .utf8)
+            return tempURL
+        } catch {
+            print("Erreur lors de l'export CSV: \(error)")
+            return nil
+        }
+    }
+    
+    // Export en JSON
+    private func exportContactAsJSON(_ contact: Contact) -> URL? {
+        do {
+            let exportData = contact.toExportData()
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = .prettyPrinted
+            let jsonData = try encoder.encode(exportData)
+            
+            let safeName = contact.name.replacingOccurrences(of: " ", with: "_")
+                .replacingOccurrences(of: "[^a-zA-Z0-9_-]", with: "", options: .regularExpression)
+            
+            let fileName = "Contact_\(safeName).json"
+            let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
+            
+            try jsonData.write(to: tempURL)
+            return tempURL
+            
+        } catch {
+            print("Erreur lors de l'export JSON: \(error)")
+            return nil
+        }
+    }
+    
+    // Import d'un contact depuis URL (JSON ou CSV)
     func importContact(from url: URL, context: ModelContext) throws -> Contact {
+        let fileExtension = url.pathExtension.lowercased()
+        
+        switch fileExtension {
+        case "json":
+            return try importFromJSON(url: url, context: context)
+        case "csv":
+            return try importFromCSV(url: url, context: context)
+        default:
+            throw ImportError.unsupportedFormat
+        }
+    }
+    
+    private func importFromJSON(url: URL, context: ModelContext) throws -> Contact {
         let data = try Data(contentsOf: url)
         let exportData = try JSONDecoder().decode(ContactExportData.self, from: data)
         
-        // Créer le nouveau contact
+        return try createContact(from: exportData, context: context)
+    }
+    
+    private func importFromCSV(url: URL, context: ModelContext) throws -> Contact {
+        let content = try String(contentsOf: url, encoding: .utf8)
+        let lines = content.components(separatedBy: .newlines).filter { !$0.isEmpty }
+        
+        guard lines.count > 1 else {
+            throw ImportError.invalidFormat
+        }
+        
+        // Parser la première ligne de données (ignorer l'en-tête)
+        let firstDataLine = lines[1]
+        let columns = parseCSVLine(firstDataLine)
+        
+        guard columns.count >= 10 else {
+            throw ImportError.invalidFormat
+        }
+        
+        // Créer le contact de base
+        let contact = Contact(
+            name: columns[0],
+            jobTitle: columns[1],
+            phone: columns[2],
+            email: columns[3],
+            notes: columns[10],
+            isFavorite: false
+        )
+        
+        // Traiter tous les lieux
+        var locations: [WorkLocation] = []
+        var seenCountries = Set<String>()
+        
+        for i in 1..<lines.count {
+            let line = lines[i]
+            let cols = parseCSVLine(line)
+            if cols.count >= 10 {
+                let country = cols[4]
+                let region = cols[5].isEmpty ? nil : cols[5]
+                let hasVehicle = cols[6].lowercased() == "oui"
+                let isHoused = cols[7].lowercased() == "oui"
+                let isResident = cols[8].lowercased() == "oui"
+                let isPrimary = cols[9].lowercased().contains("principal")
+                
+                if !country.isEmpty && !seenCountries.contains(country) {
+                    let location = WorkLocation(
+                        country: country,
+                        region: region,
+                        isLocalResident: isResident,
+                        hasVehicle: hasVehicle,
+                        isHoused: isHoused,
+                        isPrimary: isPrimary
+                    )
+                    context.insert(location)
+                    locations.append(location)
+                    seenCountries.insert(country)
+                }
+            }
+        }
+        
+        contact.locations = locations
+        context.insert(contact)
+        try context.save()
+        
+        return contact
+    }
+    
+    private func parseCSVLine(_ line: String) -> [String] {
+        var result: [String] = []
+        var current = ""
+        var inQuotes = false
+        var i = line.startIndex
+        
+        while i < line.endIndex {
+            let char = line[i]
+            
+            if char == "\"" {
+                if inQuotes && line.index(after: i) < line.endIndex && line[line.index(after: i)] == "\"" {
+                    current += "\""
+                    i = line.index(after: i)
+                } else {
+                    inQuotes.toggle()
+                }
+            } else if char == "," && !inQuotes {
+                result.append(current)
+                current = ""
+            } else {
+                current += String(char)
+            }
+            
+            i = line.index(after: i)
+        }
+        
+        result.append(current)
+        return result
+    }
+    
+    private func createContact(from exportData: ContactExportData, context: ModelContext) throws -> Contact {
         let newContact = Contact(
             name: exportData.contact.name,
             jobTitle: exportData.contact.jobTitle,
             phone: exportData.contact.phone,
             email: exportData.contact.email,
             notes: exportData.contact.notes,
-            isFavorite: false // Importé comme non-favori par défaut
+            isFavorite: false
         )
         
-        // Créer les lieux de travail
         var workLocations: [WorkLocation] = []
         for locationData in exportData.contact.locations {
             let workLocation = WorkLocation(
@@ -194,5 +353,19 @@ class ContactSharingManager: ObservableObject {
         try context.save()
         
         return newContact
+    }
+}
+
+enum ImportError: Error {
+    case unsupportedFormat
+    case invalidFormat
+    
+    var localizedDescription: String {
+        switch self {
+        case .unsupportedFormat:
+            return "Format de fichier non supporté"
+        case .invalidFormat:
+            return "Format de fichier invalide"
+        }
     }
 }

@@ -7,6 +7,7 @@ struct ContactDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var isEditing = false
     @State private var showDeleteAlert = false
+    @State private var showingExportOptions = false
     @Bindable var contact: Contact
 
     var body: some View {
@@ -182,7 +183,7 @@ struct ContactDetailView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 HStack {
                     Button {
-                        shareContact(contact)
+                        showingExportOptions = true
                     } label: {
                         Image(systemName: "square.and.arrow.up")
                     }
@@ -206,17 +207,52 @@ struct ContactDetailView: View {
         }, message: {
             Text("Cette action est irréversible.")
         })
+        .actionSheet(isPresented: $showingExportOptions) {
+            ActionSheet(
+                title: Text("Exporter le contact"),
+                message: Text("Choisissez le format d'export"),
+                buttons: [
+                    .default(Text("📱 Texte (Messages/WhatsApp)")) {
+                        shareContact(format: .text)
+                    },
+                    .default(Text("📊 CSV (Excel/Numbers)")) {
+                        shareContact(format: .csv)
+                    },
+                    .default(Text("💾 JSON (Sauvegarde complète)")) {
+                        shareContact(format: .json)
+                    },
+                    .cancel(Text("Annuler"))
+                ]
+            )
+        }
     }
     
-    private func shareContact(_ contact: Contact) {
-        // Créer les deux formats de partage
-        let textToShare = ContactSharingManager.shared.exportContactAsText(contact)
+    private func shareContact(format: ExportFormat) {
+        let exportResult = ContactSharingManager.shared.exportContact(contact, format: format)
         
-        var itemsToShare: [Any] = [textToShare]
+        var itemsToShare: [Any] = []
         
-        // Ajouter le fichier JSON si disponible
-        if let fileURL = ContactSharingManager.shared.exportContact(contact) {
-            itemsToShare.append(fileURL)
+        if exportResult.isFile {
+            // C'est un fichier (CSV ou JSON)
+            if let fileURL = exportResult.content as? URL {
+                itemsToShare.append(fileURL)
+            } else {
+                print("Erreur: Impossible de créer le fichier")
+                return
+            }
+        } else {
+            // C'est du texte
+            if let text = exportResult.content as? String {
+                itemsToShare.append(text)
+            } else {
+                print("Erreur: Impossible de créer le texte")
+                return
+            }
+        }
+        
+        guard !itemsToShare.isEmpty else {
+            print("Erreur lors de l'export")
+            return
         }
         
         let activityViewController = UIActivityViewController(
@@ -224,12 +260,27 @@ struct ContactDetailView: View {
             applicationActivities: nil
         )
         
-        // Exclure certaines activités non pertinentes
-        activityViewController.excludedActivityTypes = [
-            .assignToContact,
-            .addToReadingList,
-            .openInIBooks
-        ]
+        // Adapter les activités selon le format
+        switch format {
+        case .text:
+            // Pour le texte, privilégier les apps de communication
+            activityViewController.excludedActivityTypes = [
+                .assignToContact,
+                .addToReadingList,
+                .openInIBooks,
+                .saveToCameraRoll
+            ]
+        case .csv, .json:
+            // Pour les fichiers, privilégier le partage de fichiers
+            activityViewController.excludedActivityTypes = [
+                .assignToContact,
+                .addToReadingList,
+                .openInIBooks,
+                .postToFacebook,
+                .postToTwitter,
+                .postToWeibo
+            ]
+        }
         
         // Pour iPad
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
