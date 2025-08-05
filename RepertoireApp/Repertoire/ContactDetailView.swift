@@ -1,3 +1,4 @@
+// ContactDetailView.swift - Version mise à jour avec export
 import SwiftUI
 import SwiftData
 
@@ -179,8 +180,16 @@ struct ContactDetailView: View {
             }
             
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button("Modifier") {
-                    isEditing = true
+                HStack {
+                    Button {
+                        shareContact(contact)
+                    } label: {
+                        Image(systemName: "square.and.arrow.up")
+                    }
+                    
+                    Button("Modifier") {
+                        isEditing = true
+                    }
                 }
             }
         }
@@ -197,5 +206,43 @@ struct ContactDetailView: View {
         }, message: {
             Text("Cette action est irréversible.")
         })
+    }
+    
+    private func shareContact(_ contact: Contact) {
+        // Créer les deux formats de partage
+        let textToShare = ContactSharingManager.shared.exportContactAsText(contact)
+        
+        var itemsToShare: [Any] = [textToShare]
+        
+        // Ajouter le fichier JSON si disponible
+        if let fileURL = ContactSharingManager.shared.exportContact(contact) {
+            itemsToShare.append(fileURL)
+        }
+        
+        let activityViewController = UIActivityViewController(
+            activityItems: itemsToShare,
+            applicationActivities: nil
+        )
+        
+        // Exclure certaines activités non pertinentes
+        activityViewController.excludedActivityTypes = [
+            .assignToContact,
+            .addToReadingList,
+            .openInIBooks
+        ]
+        
+        // Pour iPad
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first,
+           let rootViewController = window.rootViewController {
+            
+            if let popover = activityViewController.popoverPresentationController {
+                popover.sourceView = window
+                popover.sourceRect = CGRect(x: window.bounds.midX, y: window.bounds.midY, width: 0, height: 0)
+                popover.permittedArrowDirections = []
+            }
+            
+            rootViewController.present(activityViewController, animated: true)
+        }
     }
 }

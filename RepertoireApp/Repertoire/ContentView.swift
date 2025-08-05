@@ -1,4 +1,4 @@
-// ContentView.swift - Version avec recherche avancée
+// ContentView.swift - Version nettoyée sans redéclarations
 import SwiftUI
 import SwiftData
 
@@ -7,10 +7,11 @@ struct ContentView: View {
     @Query private var contacts: [Contact]
     @State private var hasPerformedCleanup = false
     @State private var showingFilters = false
-    @State private var filters = Filters()
+    @State private var showingImport = false
+    @State private var currentFilters = FilterSettings()
     
     // Structure pour les filtres
-    struct Filters {
+    struct FilterSettings {
         var selectedJob = "Tous"
         var selectedCountry = "Tous"
         var includeVehicle = false
@@ -45,43 +46,61 @@ struct ContentView: View {
     }
     
     private var hasActiveFilters: Bool {
-        filters.selectedJob != "Tous" ||
-        filters.selectedCountry != "Tous" ||
-        filters.includeVehicle ||
-        filters.includeHoused ||
-        filters.includeResident
+        currentFilters.selectedJob != "Tous" ||
+        currentFilters.selectedCountry != "Tous" ||
+        currentFilters.includeVehicle ||
+        currentFilters.includeHoused ||
+        currentFilters.includeResident
     }
     
     private func matchesFilters(contact: Contact) -> Bool {
         // Métier
-        if filters.selectedJob != "Tous" {
-            if contact.jobTitle != filters.selectedJob {
+        if currentFilters.selectedJob != "Tous" {
+            if contact.jobTitle != currentFilters.selectedJob {
                 return false
             }
         }
         
-        // Pays
-        if filters.selectedCountry != "Tous" {
-            let hasCountry = contact.locations.contains { $0.country == filters.selectedCountry }
-            if !hasCountry { return false }
-        }
-        
-        // Véhiculé
-        if filters.includeVehicle {
-            let hasVehicle = contact.locations.contains { $0.hasVehicle }
-            if !hasVehicle { return false }
-        }
-        
-        // Logé
-        if filters.includeHoused {
-            let isHoused = contact.locations.contains { $0.isHoused }
-            if !isHoused { return false }
-        }
-        
-        // Résidence fiscale
-        if filters.includeResident {
-            let isResident = contact.locations.contains { $0.isLocalResident }
-            if !isResident { return false }
+        // Logique combinée Pays + Attributs
+        if currentFilters.selectedCountry != "Tous" {
+            // Trouver les lieux qui correspondent au pays sélectionné
+            let matchingLocations = contact.locations.filter { $0.country == currentFilters.selectedCountry }
+            
+            if matchingLocations.isEmpty {
+                return false // Pas de lieu dans ce pays
+            }
+            
+            // Si des attributs sont sélectionnés, vérifier qu'ils existent dans ce pays
+            if currentFilters.includeVehicle {
+                let hasVehicleInCountry = matchingLocations.contains { $0.hasVehicle }
+                if !hasVehicleInCountry { return false }
+            }
+            
+            if currentFilters.includeHoused {
+                let isHousedInCountry = matchingLocations.contains { $0.isHoused }
+                if !isHousedInCountry { return false }
+            }
+            
+            if currentFilters.includeResident {
+                let isResidentInCountry = matchingLocations.contains { $0.isLocalResident }
+                if !isResidentInCountry { return false }
+            }
+        } else {
+            // Pas de filtre pays, mais des attributs sélectionnés
+            if currentFilters.includeVehicle {
+                let hasVehicle = contact.locations.contains { $0.hasVehicle }
+                if !hasVehicle { return false }
+            }
+            
+            if currentFilters.includeHoused {
+                let isHoused = contact.locations.contains { $0.isHoused }
+                if !isHoused { return false }
+            }
+            
+            if currentFilters.includeResident {
+                let isResident = contact.locations.contains { $0.isLocalResident }
+                if !isResident { return false }
+            }
         }
         
         return true
@@ -107,7 +126,7 @@ struct ContentView: View {
                     
                     if hasActiveFilters {
                         Button("Tout effacer") {
-                            filters = Filters()
+                            currentFilters = FilterSettings()
                         }
                         .font(.caption)
                         .foregroundColor(.red)
@@ -120,29 +139,29 @@ struct ContentView: View {
                 if hasActiveFilters {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 8) {
-                            if filters.selectedJob != "Tous" {
-                                FilterChip(title: filters.selectedJob, icon: "briefcase.fill") {
-                                    filters.selectedJob = "Tous"
+                            if currentFilters.selectedJob != "Tous" {
+                                FilterChip(title: currentFilters.selectedJob, icon: "briefcase.fill") {
+                                    currentFilters.selectedJob = "Tous"
                                 }
                             }
-                            if filters.selectedCountry != "Tous" {
-                                FilterChip(title: filters.selectedCountry, icon: "location.fill") {
-                                    filters.selectedCountry = "Tous"
+                            if currentFilters.selectedCountry != "Tous" {
+                                FilterChip(title: currentFilters.selectedCountry, icon: "location.fill") {
+                                    currentFilters.selectedCountry = "Tous"
                                 }
                             }
-                            if filters.includeVehicle {
+                            if currentFilters.includeVehicle {
                                 FilterChip(title: "Véhiculé", icon: "car.fill") {
-                                    filters.includeVehicle = false
+                                    currentFilters.includeVehicle = false
                                 }
                             }
-                            if filters.includeHoused {
+                            if currentFilters.includeHoused {
                                 FilterChip(title: "Logé", icon: "house.fill") {
-                                    filters.includeHoused = false
+                                    currentFilters.includeHoused = false
                                 }
                             }
-                            if filters.includeResident {
+                            if currentFilters.includeResident {
                                 FilterChip(title: "Résidence fiscale", icon: "building.columns.fill") {
-                                    filters.includeResident = false
+                                    currentFilters.includeResident = false
                                 }
                             }
                         }
@@ -198,10 +217,19 @@ struct ContentView: View {
             .navigationTitle("Mes Contacts")
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    if !contacts.isEmpty {
-                        Text("\(filteredAndSortedContacts.count)/\(contacts.count)")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
+                    HStack {
+                        if !contacts.isEmpty {
+                            Text("\(filteredAndSortedContacts.count)/\(contacts.count)")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        Button {
+                            showingImport = true
+                        } label: {
+                            Image(systemName: "square.and.arrow.down")
+                                .foregroundColor(.blue)
+                        }
                     }
                 }
                 
@@ -212,7 +240,10 @@ struct ContentView: View {
                 }
             }
             .sheet(isPresented: $showingFilters) {
-                FiltersView(filters: $filters)
+                ContentFiltersView(filters: $currentFilters)
+            }
+            .sheet(isPresented: $showingImport) {
+                ContactImportView()
             }
             .onAppear {
                 if !hasPerformedCleanup {
@@ -227,8 +258,6 @@ struct ContentView: View {
         print("🔧 Début du nettoyage des données...")
         
         for contact in contacts {
-            var hasChanges = false
-            
             // 1. Supprimer les doublons
             let uniqueLocations = removeDuplicateLocations(contact.locations)
             if uniqueLocations.count != contact.locations.count {
@@ -237,7 +266,6 @@ struct ContentView: View {
                     context.delete(location)
                 }
                 contact.locations = uniqueLocations
-                hasChanges = true
             }
             
             // 2. Vérifier les lieux principaux
@@ -246,13 +274,11 @@ struct ContentView: View {
             if primaryCount == 0 && !contact.locations.isEmpty {
                 print("✅ Définition du lieu principal pour \(contact.name)")
                 contact.locations[0].isPrimary = true
-                hasChanges = true
             } else if primaryCount > 1 {
                 print("🔄 Correction des lieux principaux multiples pour \(contact.name)")
                 for (index, location) in contact.locations.enumerated() {
                     location.isPrimary = (index == 0)
                 }
-                hasChanges = true
             }
             
             // 3. Créer un lieu par défaut si aucun
@@ -264,7 +290,6 @@ struct ContentView: View {
                 )
                 context.insert(defaultLocation)
                 contact.locations = [defaultLocation]
-                hasChanges = true
             }
         }
         
@@ -296,6 +321,39 @@ struct ContentView: View {
 struct ContactRowView: View {
     let contact: Contact
     
+    // Fonction pour obtenir l'icône du département
+    private func getDepartmentIcon(for jobTitle: String) -> String? {
+        for (department, jobs) in JobTitles.departments {
+            if jobs.contains(jobTitle) {
+                switch department {
+                case "Réalisation":
+                    return "megaphone.fill"
+                case "Image":
+                    return "camera.fill"
+                case "Son":
+                    return "music.note"
+                case "Lumière":
+                    return "lightbulb.fill"
+                case "Régie":
+                    return "exclamationmark.triangle.fill"
+                case "Décors":
+                    return "hammer.fill"
+                case "Costumes":
+                    return "tshirt.fill"
+                case "Maquillage et Coiffure":
+                    return "paintbrush.fill"
+                case "Production":
+                    return "dollarsign.circle.fill"
+                case "Post-Production":
+                    return "tv.fill"
+                default:
+                    return nil
+                }
+            }
+        }
+        return nil
+    }
+    
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
@@ -304,33 +362,17 @@ struct ContactRowView: View {
                     .font(.headline)
                 
                 // Poste et lieu
-                Text("\(contact.jobTitle) • \(contact.city)")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                
-                // Icônes des attributs
-                HStack(spacing: 12) {
-                    ForEach(contact.locations, id: \.id) { location in
-                        HStack(spacing: 6) {
-                            if location.hasVehicle {
-                                Image(systemName: "car.fill")
-                                    .font(.caption)
-                                    .foregroundColor(.blue)
-                            }
-                            if location.isHoused {
-                                Image(systemName: "house.fill")
-                                    .font(.caption)
-                                    .foregroundColor(.green)
-                            }
-                            if location.isLocalResident {
-                                Image(systemName: "building.columns.fill")
-                                    .font(.caption)
-                                    .foregroundColor(.orange)
-                            }
-                        }
+                HStack(spacing: 8) {
+                    if let icon = getDepartmentIcon(for: contact.jobTitle) {
+                        Image(systemName: icon)
+                            .font(.caption)
+                            .foregroundColor(.blue)
                     }
+                    
+                    Text("\(contact.jobTitle) • \(contact.city)")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
                 }
-                .padding(.top, 2)
             }
             
             Spacer()
@@ -373,9 +415,9 @@ struct FilterChip: View {
     }
 }
 
-// Vue modale pour les filtres
-struct FiltersView: View {
-    @Binding var filters: ContentView.Filters
+// Vue modale pour les filtres (nom changé pour éviter les conflits)
+struct ContentFiltersView: View {
+    @Binding var filters: ContentView.FilterSettings
     @Environment(\.dismiss) private var dismiss
     @State private var jobSearchText = ""
     @State private var showingJobPicker = false
@@ -455,7 +497,7 @@ struct FiltersView: View {
                 
                 Section {
                     Button("Réinitialiser tous les filtres") {
-                        filters = ContentView.Filters()
+                        filters = ContentView.FilterSettings()
                     }
                     .foregroundColor(.red)
                     .frame(maxWidth: .infinity, alignment: .center)
@@ -471,7 +513,7 @@ struct FiltersView: View {
                 }
             }
             .sheet(isPresented: $showingJobPicker) {
-                JobPickerView(
+                ContentJobPickerView(
                     selectedJob: $filters.selectedJob,
                     searchText: $jobSearchText,
                     filteredJobs: filteredJobs
@@ -481,8 +523,8 @@ struct FiltersView: View {
     }
 }
 
-// Vue séparée pour le picker des métiers avec recherche
-struct JobPickerView: View {
+// Vue séparée pour le picker des métiers (nom changé pour éviter les conflits)
+struct ContentJobPickerView: View {
     @Binding var selectedJob: String
     @Binding var searchText: String
     @Environment(\.dismiss) private var dismiss
@@ -563,8 +605,7 @@ struct JobPickerView: View {
                                 dismiss()
                             } label: {
                                 HStack {
-                                    // Highlight du terme recherché
-                                    Text(highlightedJobText(job, searchText: searchText))
+                                    Text(job)
                                         .foregroundColor(.primary)
                                     Spacer()
                                     if selectedJob == job {
@@ -589,21 +630,98 @@ struct JobPickerView: View {
             }
         }
     }
+}
+
+// Vue pour l'import de fichiers (nom changé pour éviter les conflits)
+struct ContactImportView: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var context
+    @State private var showingDocumentPicker = false
+    @State private var showingAlert = false
+    @State private var alertMessage = ""
+    @State private var importedContact: Contact?
     
-    private func highlightedJobText(_ job: String, searchText: String) -> AttributedString {
-        var attributedString = AttributedString(job)
-        
-        if !searchText.isEmpty {
-            let range = job.range(of: searchText, options: .caseInsensitive)
-            if let range = range {
-                let nsRange = NSRange(range, in: job)
-                if let attributedRange = Range(nsRange, in: attributedString) {
-                    attributedString[attributedRange].backgroundColor = .yellow.opacity(0.3)
-                    attributedString[attributedRange].foregroundColor = .primary
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 30) {
+                Image(systemName: "square.and.arrow.down.fill")
+                    .font(.system(size: 60))
+                    .foregroundColor(.blue)
+                
+                VStack(spacing: 16) {
+                    Text("Importer un contact")
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                    
+                    Text("Sélectionnez un fichier .repertoire reçu d'un collègue pour l'ajouter à vos contacts")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+                }
+                
+                Button {
+                    showingDocumentPicker = true
+                } label: {
+                    HStack {
+                        Image(systemName: "folder.fill")
+                        Text("Choisir un fichier")
+                    }
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .padding()
+                    .background(Color.blue)
+                    .cornerRadius(12)
+                }
+                
+                Spacer()
+            }
+            .padding()
+            .navigationTitle("Import")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Fermer") {
+                        dismiss()
+                    }
                 }
             }
+            .fileImporter(
+                isPresented: $showingDocumentPicker,
+                allowedContentTypes: [.json],
+                allowsMultipleSelection: false
+            ) { result in
+                handleFileImport(result: result)
+            }
+            .alert("Import", isPresented: $showingAlert) {
+                Button("OK") {
+                    if importedContact != nil {
+                        dismiss()
+                    }
+                }
+            } message: {
+                Text(alertMessage)
+            }
         }
-        
-        return attributedString
+    }
+    
+    private func handleFileImport(result: Result<[URL], Error>) {
+        switch result {
+        case .success(let urls):
+            guard let url = urls.first else { return }
+            
+            do {
+                importedContact = try ContactSharingManager.shared.importContact(from: url, context: context)
+                alertMessage = "Contact \"\(importedContact?.name ?? "")\" importé avec succès !"
+                showingAlert = true
+            } catch {
+                alertMessage = "Erreur lors de l'import: \(error.localizedDescription)"
+                showingAlert = true
+            }
+            
+        case .failure(let error):
+            alertMessage = "Erreur lors de la sélection: \(error.localizedDescription)"
+            showingAlert = true
+        }
     }
 }
