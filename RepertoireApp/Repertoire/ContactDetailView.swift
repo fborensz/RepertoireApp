@@ -11,7 +11,8 @@ struct ContactDetailView: View {
 
     var body: some View {
         Form {
-            Section(header: Text("Informations")) {
+            // Informations principales
+            Section(header: Text("Informations principales")) {
                 HStack {
                     Text("Nom")
                     Spacer()
@@ -24,15 +25,25 @@ struct ContactDetailView: View {
                     Text(contact.jobTitle)
                         .foregroundColor(.secondary)
                 }
-                HStack {
-                    Text("Ville")
-                    Spacer()
-                    Text(contact.city)
-                        .foregroundColor(.secondary)
-                }
-
             }
 
+            // Lieu de travail
+            Section(header: Text("Lieu de travail")) {
+                if let loc = contact.locations.first {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(loc.country + (loc.region != nil ? " / \(loc.region!)" : ""))
+
+                        Toggle("Véhiculé", isOn: .constant(loc.hasVehicle))
+                            .disabled(true)
+                        Toggle("Logé", isOn: .constant(loc.isHoused))
+                            .disabled(true)
+                        Toggle("Résidence fiscale", isOn: .constant(loc.isLocalResident))
+                            .disabled(true)
+                    }
+                }
+            }
+
+            // Contact
             Section(header: Text("Contact")) {
                 if !contact.phone.isEmpty {
                     HStack {
@@ -52,12 +63,14 @@ struct ContactDetailView: View {
                 }
             }
 
+            // Notes
             if !contact.notes.isEmpty {
                 Section(header: Text("Notes")) {
                     Text(contact.notes)
                 }
             }
 
+            // Supprimer
             Section {
                 Button(role: .destructive) {
                     showDeleteAlert = true

@@ -8,11 +8,13 @@ struct EditContactView: View {
 
     @State private var selectedCountry: String = "Worldwide"
     @State private var selectedRegion: String? = nil
+    @State private var isHoused = false
+    @State private var isLocalResident = false
+    @State private var hasVehicle = false
 
     var body: some View {
         NavigationView {
             Form {
-                // SECTION - Informations principales
                 Section(header: Text("Informations principales")) {
                     TextField("Nom complet", text: $contact.name)
 
@@ -30,7 +32,6 @@ struct EditContactView: View {
                     }
                 }
 
-                // SECTION - Lieu de travail
                 Section(header: Text("Lieu de travail")) {
                     Picker("Pays", selection: $selectedCountry) {
                         ForEach(Locations.countries, id: \.self) { country in
@@ -48,9 +49,12 @@ struct EditContactView: View {
                             }
                         }
                     }
+
+                    Toggle("Véhiculé", isOn: $hasVehicle)
+                    Toggle("Logé", isOn: $isHoused)
+                    Toggle("Résidence fiscale", isOn: $isLocalResident)
                 }
 
-                // SECTION - Contact
                 Section(header: Text("Contact")) {
                     TextField("Téléphone", text: $contact.phone)
                         .keyboardType(.phonePad)
@@ -58,9 +62,9 @@ struct EditContactView: View {
                         .keyboardType(.emailAddress)
                 }
 
-                // SECTION - Notes
                 Section(header: Text("Notes")) {
-                    TextField("Notes supplémentaires", text: $contact.notes)
+                    TextField("Notes supplémentaires", text: $contact.notes, axis: .vertical)
+                        .lineLimit(3...6)
                 }
             }
             .navigationTitle("Modifier contact")
@@ -70,26 +74,36 @@ struct EditContactView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Enregistrer") {
-                        // On reconstruit city en fonction du pays et de la région
-                        contact.city = selectedCountry +
-                            (selectedCountry == "France" && selectedRegion != nil ? " / \(selectedRegion!)" : "")
+                        // Mettre à jour ou créer la location
+                        if let existingLocation = contact.locations.first {
+                            existingLocation.country = selectedCountry
+                            existingLocation.region = selectedRegion
+                            existingLocation.isLocalResident = isLocalResident
+                            existingLocation.hasVehicle = hasVehicle
+                            existingLocation.isHoused = isHoused
+                        } else {
+                            let newLocation = WorkLocation(
+                                country: selectedCountry,
+                                region: selectedRegion,
+                                isLocalResident: isLocalResident,
+                                hasVehicle: hasVehicle,
+                                isHoused: isHoused
+                            )
+                            contact.locations = [newLocation]
+                        }
+                        
                         try? context.save()
                         dismiss()
                     }
                 }
             }
             .onAppear {
-                // Préremplissage du pays et de la région
-                if contact.city.contains("/") {
-                    let parts = contact.city.split(separator: "/").map { $0.trimmingCharacters(in: .whitespaces) }
-                    if let country = parts.first {
-                        selectedCountry = String(country)
-                    }
-                    if parts.count > 1 {
-                        selectedRegion = String(parts[1])
-                    }
-                } else if !contact.city.isEmpty {
-                    selectedCountry = contact.city
+                if let loc = contact.locations.first {
+                    selectedCountry = loc.country
+                    selectedRegion = loc.region
+                    isLocalResident = loc.isLocalResident
+                    hasVehicle = loc.hasVehicle
+                    isHoused = loc.isHoused
                 }
             }
         }
