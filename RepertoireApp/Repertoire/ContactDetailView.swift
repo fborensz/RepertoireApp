@@ -30,12 +30,7 @@ struct ContactDetailView: View {
                     Text(contact.city)
                         .foregroundColor(.secondary)
                 }
-                HStack {
-                    Text("Compétences")
-                    Spacer()
-                    Text(contact.skills)
-                        .foregroundColor(.secondary)
-                }
+
             }
 
             Section(header: Text("Contact")) {

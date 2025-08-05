@@ -81,7 +81,6 @@ struct AddContactView: View {
                             name: name,
                             jobTitle: jobTitle,
                             city: cityString,
-                            skills: "",
                             phone: phone,
                             email: email,
                             notes: notes
