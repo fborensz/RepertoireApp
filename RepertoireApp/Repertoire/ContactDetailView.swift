@@ -6,12 +6,10 @@ struct ContactDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var isEditing = false
     @State private var showDeleteAlert = false
-
-    var contact: Contact
+    @Bindable var contact: Contact
 
     var body: some View {
         Form {
-            // Informations principales
             Section(header: Text("Informations principales")) {
                 HStack {
                     Text("Nom")
@@ -27,23 +25,113 @@ struct ContactDetailView: View {
                 }
             }
 
-            // Lieu de travail
             Section(header: Text("Lieu de travail")) {
-                if let loc = contact.locations.first {
+                // Lieu principal
+                if let primaryLoc = contact.primaryLocation {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(loc.country + (loc.region != nil ? " / \(loc.region!)" : ""))
-
-                        Toggle("Véhiculé", isOn: .constant(loc.hasVehicle))
-                            .disabled(true)
-                        Toggle("Logé", isOn: .constant(loc.isHoused))
-                            .disabled(true)
-                        Toggle("Résidence fiscale", isOn: .constant(loc.isLocalResident))
-                            .disabled(true)
+                        HStack {
+                            Text("Principal")
+                                .font(.caption)
+                                .foregroundColor(.blue)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 2)
+                                .background(Color.blue.opacity(0.1))
+                                .clipShape(Capsule())
+                            Spacer()
+                        }
+                        
+                        Text(primaryLoc.country + (primaryLoc.region != nil ? " / \(primaryLoc.region!)" : ""))
+                        
+                        // Icônes subtiles pour les options actives
+                        HStack(spacing: 16) {
+                            if primaryLoc.hasVehicle {
+                                Image(systemName: "car.fill")
+                                    .font(.caption)
+                                    .foregroundColor(.blue)
+                            }
+                            if primaryLoc.isHoused {
+                                Image(systemName: "house.fill")
+                                    .font(.caption)
+                                    .foregroundColor(.green)
+                            }
+                            if primaryLoc.isLocalResident {
+                                Image(systemName: "building.columns.fill")
+                                    .font(.caption)
+                                    .foregroundColor(.orange)
+                            }
+                        }
+                        .padding(.top, 4)
+                    }
+                    .padding(.bottom, 8)
+                }
+                
+                // Lieux secondaires
+                ForEach(Array(contact.secondaryLocations.enumerated()), id: \.element.id) { index, secondaryLoc in
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Text("Secondaire \(index + 1)")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 2)
+                                .background(Color.gray.opacity(0.1))
+                                .clipShape(Capsule())
+                            Spacer()
+                        }
+                        
+                        Text(secondaryLoc.country + (secondaryLoc.region != nil ? " / \(secondaryLoc.region!)" : ""))
+                        
+                        // Icônes subtiles pour les options actives
+                        HStack(spacing: 16) {
+                            if secondaryLoc.hasVehicle {
+                                Image(systemName: "car.fill")
+                                    .font(.caption)
+                                    .foregroundColor(.blue)
+                            }
+                            if secondaryLoc.isHoused {
+                                Image(systemName: "house.fill")
+                                    .font(.caption)
+                                    .foregroundColor(.green)
+                            }
+                            if secondaryLoc.isLocalResident {
+                                Image(systemName: "building.columns.fill")
+                                    .font(.caption)
+                                    .foregroundColor(.orange)
+                            }
+                        }
+                        .padding(.top, 4)
+                    }
+                    .padding(.bottom, 4)
+                }
+                
+                // Si aucun lieu principal n'est défini, afficher le premier comme fallback
+                if contact.primaryLocation == nil && !contact.locations.isEmpty {
+                    let firstLoc = contact.locations[0]
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(firstLoc.country + (firstLoc.region != nil ? " / \(firstLoc.region!)" : ""))
+                        
+                        HStack(spacing: 16) {
+                            if firstLoc.hasVehicle {
+                                Image(systemName: "car.fill")
+                                    .font(.caption)
+                                    .foregroundColor(.blue)
+                            }
+                            if firstLoc.isHoused {
+                                Image(systemName: "house.fill")
+                                    .font(.caption)
+                                    .foregroundColor(.green)
+                            }
+                            if firstLoc.isLocalResident {
+                                Image(systemName: "building.columns.fill")
+                                    .font(.caption)
+                                    .foregroundColor(.orange)
+                            }
+                        }
+                        .padding(.top, 4)
                     }
                 }
             }
 
-            // Contact
             Section(header: Text("Contact")) {
                 if !contact.phone.isEmpty {
                     HStack {
@@ -63,14 +151,12 @@ struct ContactDetailView: View {
                 }
             }
 
-            // Notes
             if !contact.notes.isEmpty {
                 Section(header: Text("Notes")) {
                     Text(contact.notes)
                 }
             }
 
-            // Supprimer
             Section {
                 Button(role: .destructive) {
                     showDeleteAlert = true
@@ -82,6 +168,16 @@ struct ContactDetailView: View {
         }
         .navigationTitle(contact.name)
         .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button {
+                    contact.toggleFavorite()
+                    try? context.save()
+                } label: {
+                    Image(systemName: contact.isFavorite ? "star.fill" : "star")
+                        .foregroundColor(contact.isFavorite ? .yellow : .gray)
+                }
+            }
+            
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("Modifier") {
                     isEditing = true

@@ -33,9 +33,25 @@ class Contact {
     
     // Propriété computed pour la compatibilité avec l'ancien code
     var city: String {
-        if let firstLocation = locations.first {
+        if let primaryLocation = locations.first(where: { $0.isPrimary }) {
+            return primaryLocation.country + (primaryLocation.region != nil ? " / \(primaryLocation.region!)" : "")
+        } else if let firstLocation = locations.first {
             return firstLocation.country + (firstLocation.region != nil ? " / \(firstLocation.region!)" : "")
         }
         return "Non spécifié"
+    }
+    
+    // Propriétés computed pour accéder aux différents lieux
+    var primaryLocation: WorkLocation? {
+        return locations.first(where: { $0.isPrimary })
+    }
+    
+    var secondaryLocations: [WorkLocation] {
+        return locations.filter { !$0.isPrimary }
+    }
+    
+    // Toggle favori
+    func toggleFavorite() {
+        isFavorite.toggle()
     }
 }
