@@ -1,0 +1,1839 @@
+"notes": "Jeune équipe, matériel moderne",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Île-de-France",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": false,
+          "isPrimary": true
+        },
+    {
+      "name": "Dylan Martinez",
+      "jobTitle": "Cadreur",
+      "phone": "06 99 00 11 98",
+      "email": "d.martinez@action.fr",
+      "notes": "Tournages action, sport, adrénaline",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Normandie",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Jade Blanchard",
+      "jobTitle": "Cadreur",
+      "phone": "06 00 11 22 99",
+      "email": "j.blanchard@beauty.fr",
+      "notes": "Beauté, mode, éclairage flatteur",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Centre-Val de Loire",
+          "isLocalResident": true,
+          "hasVehicle": false,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Loïc Bertrand",
+      "jobTitle": "Cadreur",
+      "phone": "06 11 22 33 00",
+      "email": "l.bertrand@veteran.fr",
+      "notes": "30 ans d'expérience, mentor jeunes",
+      "isFavorite": true,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Bourgogne-Franche-Comté",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    }
+  ]
+}
+      ]
+    },
+    {
+      "name": "Jade Martinez",
+      "jobTitle": "Électro",
+      "phone": "06 23 45 67 49",
+      "email": "j.martinez@electric.fr",
+      "notes": "Spécialisée projecteurs, colorimétrie",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Provence-Alpes-Côte d'Azur",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Fabien Dupuis",
+      "jobTitle": "Machiniste",
+      "phone": "06 34 56 78 50",
+      "email": "f.dupuis@grip.fr",
+      "notes": "Rails, dollys, structures complexes",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Auvergne-Rhône-Alpes",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Anaïs Roussel",
+      "jobTitle": "Machiniste",
+      "phone": "06 45 67 89 51",
+      "email": "a.roussel@grip.fr",
+      "notes": "Précise, fiable, bonne condition physique",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Bretagne",
+          "isLocalResident": true,
+          "hasVehicle": false,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Quentin Lemoine",
+      "jobTitle": "Rigger",
+      "phone": "06 56 78 90 52",
+      "email": "q.lemoine@rig.fr",
+      "notes": "Cordiste professionnel, sécurité max",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Occitanie",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Elsa Giroud",
+      "jobTitle": "Régisseur Adjoint",
+      "phone": "06 67 89 01 53",
+      "email": "e.giroud@regie.fr",
+      "notes": "Multitâche, débrouillarde, relations",
+      "isFavorite": true,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Île-de-France",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Victor Morin",
+      "jobTitle": "Régisseur Transport",
+      "phone": "06 78 90 12 54",
+      "email": "v.morin@transport.fr",
+      "notes": "Permis poids lourds, logistique",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Grand Est",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Iris Leroy",
+      "jobTitle": "Accessoiriste",
+      "phone": "06 89 01 23 55",
+      "email": "i.leroy@props.fr",
+      "notes": "Collection vintage, objets rares",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Normandie",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Loan Perrin",
+      "jobTitle": "Constructeur Décor",
+      "phone": "06 90 12 34 56",
+      "email": "l.perrin@build.fr",
+      "notes": "Menuiserie, soudure, constructions",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Pays de la Loire",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Célia Robin",
+      "jobTitle": "Peintre Décor",
+      "phone": "06 01 23 45 57",
+      "email": "c.robin@paint.fr",
+      "notes": "Patines, trompe-l'oeil, textures",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Centre-Val de Loire",
+          "isLocalResident": true,
+          "hasVehicle": false,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Mehdi Bourgeois",
+      "jobTitle": "Assistant Costumier",
+      "phone": "06 12 34 56 58",
+      "email": "m.bourgeois@costume.fr",
+      "notes": "Organisation parfaite, détail précis",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Île-de-France",
+          "isLocalResident": true,
+          "hasVehicle": false,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Lise Carpentier",
+      "jobTitle": "Styliste",
+      "phone": "06 23 45 67 59",
+      "email": "l.carpentier@style.fr",
+      "notes": "Tendances mode, look contemporain",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Provence-Alpes-Côte d'Azur",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Sacha Delacroix",
+      "jobTitle": "Assistant Maquilleur",
+      "phone": "06 34 56 78 60",
+      "email": "s.delacroix@makeup.fr",
+      "notes": "Rapidité, propreté, discrétion",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Bourgogne-Franche-Comté",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Timothé Gaillard",
+      "jobTitle": "Perruquier",
+      "phone": "06 45 67 89 61",
+      "email": "t.gaillard@wig.fr",
+      "notes": "Perruques sur mesure, implantation",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Hauts-de-France",
+          "isLocalResident": true,
+          "hasVehicle": false,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Capucine Lemaire",
+      "jobTitle": "Assistant de Production",
+      "phone": "06 56 78 90 62",
+      "email": "c.lemaire@prod.fr",
+      "notes": "Débutante, très motivée, ponctuelle",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Île-de-France",
+          "isLocalResident": true,
+          "hasVehicle": false,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Axel Vidal",
+      "jobTitle": "Administrateur de Production",
+      "phone": "06 67 89 01 63",
+      "email": "a.vidal@admin.fr",
+      "notes": "Comptabilité, contrats, rigueur",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Occitanie",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Romane Dufour",
+      "jobTitle": "Secrétaire de Production",
+      "phone": "06 78 90 12 64",
+      "email": "r.dufour@secretariat.fr",
+      "notes": "Organisation parfaite, relationnel",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Nouvelle-Aquitaine",
+          "isLocalResident": true,
+          "hasVehicle": false,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Bastien Hubert",
+      "jobTitle": "Graphiste VFX",
+      "phone": "06 89 01 23 65",
+      "email": "b.hubert@vfx.fr",
+      "notes": "Nuke, Houdini, effets complexes",
+      "isFavorite": true,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Île-de-France",
+          "isLocalResident": true,
+          "hasVehicle": false,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Elena Kowalski",
+      "jobTitle": "Monteur Son",
+      "phone": "06 90 12 34 66",
+      "email": "e.kowalski@sound.fr",
+      "notes": "Pro Tools expert, sound design",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Île-de-France",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Yanis Rousseau",
+      "jobTitle": "Mixeur",
+      "phone": "06 01 23 45 67",
+      "email": "y.rousseau@mix.fr",
+      "notes": "Studio professionnel, dolby atmos",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Provence-Alpes-Côte d'Azur",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Cassandra Lopez",
+      "jobTitle": "Coordinateur Stunts",
+      "phone": "06 12 34 56 68",
+      "email": "c.lopez@stunt.fr",
+      "notes": "Sécurité, coordination équipes cascade",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Auvergne-Rhône-Alpes",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "William Davis",
+      "jobTitle": "Photographe de Plateau",
+      "phone": "+1 555 987 6540",
+      "email": "w.davis@stillphoto.ca",
+      "notes": "Portfolio international, discret",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "Canada",
+          "region": null,
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "João Silva",
+      "jobTitle": "Chef Cuisinier Plateau",
+      "phone": "+351 91 234 5670",
+      "email": "j.silva@catering.pt",
+      "notes": "Cuisine locale, régimes spéciaux",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "Portugal",
+          "region": null,
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Luna Vandenberg",
+      "jobTitle": "DIT",
+      "phone": "+31 6 12 34 56 71",
+      "email": "l.vandenberg@dit.nl",
+      "notes": "Workflow numérique, archivage sécurisé",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "Pays-Bas",
+          "region": null,
+          "isLocalResident": true,
+          "hasVehicle": false,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Finn Mueller",
+      "jobTitle": "Data Manager",
+      "phone": "+41 79 123 4572",
+      "email": "f.mueller@data.ch",
+      "notes": "Backup multiple, sécurité données",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "Suisse",
+          "region": null,
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Kirsten Hansen",
+      "jobTitle": "Opérateur Steadicam",
+      "phone": "+47 90 12 34 73",
+      "email": "k.hansen@steadicam.no",
+      "notes": "Spécialiste mouvements complexes",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "Norvège",
+          "region": null,
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Oliver Thompson",
+      "jobTitle": "Making-of",
+      "phone": "+61 4 12 34 5674",
+      "email": "o.thompson@bts.au",
+      "notes": "Behind the scenes, interviews équipe",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "Australie",
+          "region": null,
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Sophie Williams",
+      "jobTitle": "Dresseur Animalier",
+      "phone": "+64 21 123 4575",
+      "email": "s.williams@animal.nz",
+      "notes": "Chevaux, chiens, animaux sauvages",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "Nouvelle-Zélande",
+          "region": null,
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Henri Dubois",
+      "jobTitle": "3e Assistant Caméra",
+      "phone": "06 11 22 33 76",
+      "email": "h.dubois@3rd.fr",
+      "notes": "Matériel caméra, chargement cartes",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Île-de-France",
+          "isLocalResident": true,
+          "hasVehicle": false,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Juliette Marchand",
+      "jobTitle": "Vidéo Assist",
+      "phone": "06 22 33 44 77",
+      "email": "j.marchand@video.fr",
+      "notes": "Monitoring temps réel, replay",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Bretagne",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Simon Lefevre",
+      "jobTitle": "Assistant Son",
+      "phone": "06 33 44 55 78",
+      "email": "s.lefevre@soundasst.fr",
+      "notes": "Câblage, HF, monitoring",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Grand Est",
+          "isLocalResident": true,
+          "hasVehicle": false,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Maëlys Girard",
+      "jobTitle": "Sound Designer",
+      "phone": "06 44 55 66 79",
+      "email": "m.girard@soundfx.fr",
+      "notes": "Ambiances, effets, création sonore",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Occitanie",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Romain Tessier",
+      "jobTitle": "Régisseur Plateau",
+      "phone": "06 55 66 77 80",
+      "email": "r.tessier@plateau.fr",
+      "notes": "Sécurité plateau, protocoles Covid",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Pays de la Loire",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Léonie Barbier",
+      "jobTitle": "Assistant Décorateur",
+      "phone": "06 66 77 88 81",
+      "email": "l.barbier@decor.fr",
+      "notes": "Recherches, achats, coordination",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Normandie",
+          "isLocalResident": true,
+          "hasVehicle": false,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Enzo Moreau",
+      "jobTitle": "Habilleur de Décor",
+      "phone": "06 77 88 99 82",
+      "email": "e.moreau@dressing.fr",
+      "notes": "Finitions, détails, atmosphère",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Centre-Val de Loire",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Violette Roussel",
+      "jobTitle": "Costumier",
+      "phone": "06 88 99 00 83",
+      "email": "v.roussel@wardrobe.fr",
+      "notes": "Retouches express, créations sur mesure",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Bourgogne-Franche-Comté",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Apolline Bernard",
+      "jobTitle": "Coiffeur",
+      "phone": "06 99 00 11 84",
+      "email": "a.bernard@hair.fr",
+      "notes": "Coiffures rapides, look naturel",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Hauts-de-France",
+          "isLocalResident": true,
+          "hasVehicle": false,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Nolan Carpentier",
+      "jobTitle": "3e Assistant Réalisateur",
+      "phone": "06 00 11 22 85",
+      "email": "n.carpentier@3rd.fr",
+      "notes": "Figurants, sécurité, logistique de base",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Île-de-France",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Iris Lemoine",
+      "jobTitle": "2e Assistant Caméra",
+      "phone": "06 11 22 33 86",
+      "email": "i.lemoine@clap.fr",
+      "notes": "Clap, chargement, organisation matériel",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Provence-Alpes-Côte d'Azur",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Gabin Roche",
+      "jobTitle": "Opérateur Louma",
+      "phone": "06 22 33 44 87",
+      "email": "g.roche@louma.fr",
+      "notes": "Grues, mouvements précis, technicien",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Auvergne-Rhône-Alpes",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Alba Rodriguez",
+      "jobTitle": "Cadreur",
+      "phone": "+34 600 123 488",
+      "email": "a.rodriguez@cam.es",
+      "notes": "Bilingue français-espagnol, expérimentée",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "Espagne",
+          "region": null,
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Marco Bianchi",
+      "jobTitle": "Chef opérateur",
+      "phone": "+39 345 678 9089",
+      "email": "m.bianchi@cinematography.it",
+      "notes": "Style italien, lumière méditerranéenne",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "Italie",
+          "region": null,
+          "isLocalResident": true,
+          "hasVehicle": false,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Léa Fontaine",
+      "jobTitle": "Menuisier Décor",
+      "phone": "06 33 44 55 90",
+      "email": "l.fontaine@wood.fr",
+      "notes": "Constructions bois, assemblages précis",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Nouvelle-Aquitaine",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Jules Mercier",
+      "jobTitle": "Cadreur",
+      "phone": "06 44 55 66 91",
+      "email": "j.mercier@handheld.fr",
+      "notes": "Caméra portée, style documentaire",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Bretagne",
+          "isLocalResident": true,
+          "hasVehicle": false,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Rose Leclerc",
+      "jobTitle": "Cadreur",
+      "phone": "06 55 66 77 92",
+      "email": "r.leclerc@camera.fr",
+      "notes": "Portraits, gros plans, sensibilité",
+      "isFavorite": true,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Île-de-France",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Tom Anderson",
+      "jobTitle": "Cadreur",
+      "phone": "+44 7700 123493",
+      "email": "t.anderson@uk.camera",
+      "notes": "Style britannique, weather cover expert",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "Royaume-Uni",
+          "region": null,
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Luc Bergeron",
+      "jobTitle": "Cadreur",
+      "phone": "+1 514 123 4594",
+      "email": "l.bergeron@cam.ca",
+      "notes": "Froid extrême, conditions difficiles",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "Canada",
+          "region": null,
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Camille Dufresne",
+      "jobTitle": "Cadreur",
+      "phone": "06 66 77 88 95",
+      "email": "c.dufresne@motion.fr",
+      "notes": "Mouvements fluides, chorégraphie caméra",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Occitanie",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Antoine Leclercq",
+      "jobTitle": "Cadreur",
+      "phone": "06 77 88 99 96",
+      "email": "a.leclercq@steadiness.fr",
+      "notes": "Main sûre, cadres stables, précis",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Grand Est",
+          "isLocalResident": true,
+          "hasVehicle": false,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Margaux Robin",
+      "jobTitle": "Cadreur",
+      "phone": "06 88 99 00 97",
+      "email": "m.robin@creative.fr",
+      "notes": "Angles créatifs, compositions originales",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Pays de la Loire",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]{
+  "version": "1.0",
+  "exportDate": "2025-08-06T14:30:00Z",
+  "totalContacts": 100,
+  "filterDescription": "Données de test - 100 contacts fictifs",
+  "contacts": [
+    {
+      "name": "Jean Dupont",
+      "jobTitle": "Réalisateur",
+      "phone": "06 12 34 56 01",
+      "email": "j.dupont@cinema.fr",
+      "notes": "Spécialiste films d'auteur, disponible septembre",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Île-de-France",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Marie Martin",
+      "jobTitle": "Chef opérateur",
+      "phone": "06 23 45 67 02",
+      "email": "m.martin@image.fr",
+      "notes": "Experte éclairage naturel, tournages extérieurs",
+      "isFavorite": true,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Provence-Alpes-Côte d'Azur",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Pierre Bernard",
+      "jobTitle": "Cadreur",
+      "phone": "06 34 56 78 03",
+      "email": "p.bernard@image.pro",
+      "notes": "Steadicam, drone, 15 ans d'expérience",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Île-de-France",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        },
+        {
+          "country": "Belgique",
+          "region": null,
+          "isLocalResident": false,
+          "hasVehicle": false,
+          "isHoused": true,
+          "isPrimary": false
+        }
+      ]
+    },
+    {
+      "name": "Sophie Dubois",
+      "jobTitle": "1er Assistant Caméra",
+      "phone": "06 45 67 89 04",
+      "email": "s.dubois@focus.fr",
+      "notes": "Précise, rapide, bonne entente équipe",
+      "isFavorite": true,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Occitanie",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Thomas Moreau",
+      "jobTitle": "Ingénieur du Son",
+      "phone": "06 56 78 90 05",
+      "email": "t.moreau@sound.fr",
+      "notes": "Matériel haut de gamme, mixage live",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Bretagne",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Camille Rousseau",
+      "jobTitle": "Perchman",
+      "phone": "06 67 89 01 06",
+      "email": "c.rousseau@audio.fr",
+      "notes": "Discrète, bonne condition physique",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Île-de-France",
+          "isLocalResident": true,
+          "hasVehicle": false,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Antoine Lefevre",
+      "jobTitle": "Chef Électro",
+      "phone": "06 78 90 12 07",
+      "email": "a.lefevre@light.pro",
+      "notes": "Équipe de 5 personnes, gros plateaux",
+      "isFavorite": true,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Île-de-France",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Julie Lambert",
+      "jobTitle": "Électro",
+      "phone": "06 89 01 23 08",
+      "email": "j.lambert@electric.fr",
+      "notes": "Spécialiste LED, éco-responsable",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Auvergne-Rhône-Alpes",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Nicolas Petit",
+      "jobTitle": "Chef Machiniste",
+      "phone": "06 90 12 34 09",
+      "email": "n.petit@grip.fr",
+      "notes": "Travelling, dolly, grues légères",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Nouvelle-Aquitaine",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Laura Garnier",
+      "jobTitle": "Machiniste",
+      "phone": "06 01 23 45 10",
+      "email": "l.garnier@grip.pro",
+      "notes": "Force, précision, bonne humeur",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Grand Est",
+          "isLocalResident": true,
+          "hasVehicle": false,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "David Simon",
+      "jobTitle": "Régisseur Général",
+      "phone": "06 12 34 56 11",
+      "email": "d.simon@regie.fr",
+      "notes": "Organisé, relationnel, résout tout",
+      "isFavorite": true,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Île-de-France",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        },
+        {
+          "country": "Suisse",
+          "region": null,
+          "isLocalResident": false,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": false
+        }
+      ]
+    },
+    {
+      "name": "Emma Faure",
+      "jobTitle": "Assistant Régie",
+      "phone": "06 23 45 67 12",
+      "email": "e.faure@assistant.fr",
+      "notes": "Première expérience, motivée",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Occitanie",
+          "isLocalResident": true,
+          "hasVehicle": false,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Maxime Vincent",
+      "jobTitle": "Chef Décorateur",
+      "phone": "06 34 56 78 13",
+      "email": "m.vincent@decor.fr",
+      "notes": "Style vintage, attention aux détails",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Pays de la Loire",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Chloe Mercier",
+      "jobTitle": "Ensemblière",
+      "phone": "06 45 67 89 14",
+      "email": "c.mercier@ensemble.fr",
+      "notes": "Créative, budget serré OK",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Normandie",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Julien Blanc",
+      "jobTitle": "Chef Costumier",
+      "phone": "06 56 78 90 15",
+      "email": "j.blanc@costume.fr",
+      "notes": "Période, contemporain, retouches",
+      "isFavorite": true,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Île-de-France",
+          "isLocalResident": true,
+          "hasVehicle": false,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Alice Bonnet",
+      "jobTitle": "Habilleur",
+      "phone": "06 67 89 01 16",
+      "email": "a.bonnet@wardrobe.fr",
+      "notes": "Rapide, discrète, couture express",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Centre-Val de Loire",
+          "isLocalResident": true,
+          "hasVehicle": false,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Hugo Roux",
+      "jobTitle": "Chef Maquilleur",
+      "phone": "06 78 90 12 17",
+      "email": "h.roux@makeup.fr",
+      "notes": "Effets spéciaux, prothèses, beauté",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Provence-Alpes-Côte d'Azur",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Léa Girard",
+      "jobTitle": "Maquilleur",
+      "phone": "06 89 01 23 18",
+      "email": "l.girard@beauty.fr",
+      "notes": "Maquillage de jour, naturel",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Bourgogne-Franche-Comté",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Paul Morel",
+      "jobTitle": "Chef Coiffeur",
+      "phone": "06 90 12 34 19",
+      "email": "p.morel@hair.fr",
+      "notes": "Perruques, coiffures d'époque",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Hauts-de-France",
+          "isLocalResident": true,
+          "hasVehicle": false,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Manon Durand",
+      "jobTitle": "Producteur",
+      "phone": "06 01 23 45 20",
+      "email": "m.durand@prod.fr",
+      "notes": "Courts métrages, budgets créatifs",
+      "isFavorite": true,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Île-de-France",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Lucas Fontaine",
+      "jobTitle": "Directeur de Production",
+      "phone": "06 12 34 56 21",
+      "email": "l.fontaine@direction.fr",
+      "notes": "Expérience internationale, efficace",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Île-de-France",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        },
+        {
+          "country": "Canada",
+          "region": null,
+          "isLocalResident": false,
+          "hasVehicle": true,
+          "isHoused": false,
+          "isPrimary": false
+        }
+      ]
+    },
+    {
+      "name": "Sarah Chevalier",
+      "jobTitle": "Monteur Image",
+      "phone": "06 23 45 67 22",
+      "email": "s.chevalier@edit.fr",
+      "notes": "Avid, Premiere, rythme dynamique",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Île-de-France",
+          "isLocalResident": true,
+          "hasVehicle": false,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Romain Gauthier",
+      "jobTitle": "Assistant Monteur",
+      "phone": "06 34 56 78 23",
+      "email": "r.gauthier@assist.fr",
+      "notes": "Organisation parfaite, backup sécurisé",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Auvergne-Rhône-Alpes",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Clara Leroux",
+      "jobTitle": "Étalonneur",
+      "phone": "06 45 67 89 24",
+      "email": "c.leroux@color.fr",
+      "notes": "DaVinci expert, look cinéma",
+      "isFavorite": true,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Île-de-France",
+          "isLocalResident": true,
+          "hasVehicle": false,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Benjamin Fournier",
+      "jobTitle": "Cascadeur",
+      "phone": "06 56 78 90 25",
+      "email": "b.fournier@stunt.fr",
+      "notes": "Combat, chute, conduite, assurance OK",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Provence-Alpes-Côte d'Azur",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Océane Michel",
+      "jobTitle": "Scripte",
+      "phone": "06 67 89 01 26",
+      "email": "o.michel@script.fr",
+      "notes": "Mémoire parfaite, rapports précis",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Bretagne",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Alexandre Roy",
+      "jobTitle": "1er Assistant Réalisateur",
+      "phone": "06 78 90 12 27",
+      "email": "a.roy@assist.fr",
+      "notes": "Leadership naturel, planning au top",
+      "isFavorite": true,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Île-de-France",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Inès André",
+      "jobTitle": "2e Assistant Réalisateur",
+      "phone": "06 89 01 23 28",
+      "email": "i.andre@2nd.fr",
+      "notes": "Casting figurants, coordination",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Occitanie",
+          "isLocalResident": true,
+          "hasVehicle": false,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Théo Masson",
+      "jobTitle": "Cadreur",
+      "phone": "06 90 12 34 29",
+      "email": "t.masson@camera.be",
+      "notes": "Spécialiste drone et underwater",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "Belgique",
+          "region": null,
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        },
+        {
+          "country": "France",
+          "region": "Nord-Pas-de-Calais",
+          "isLocalResident": false,
+          "hasVehicle": false,
+          "isHoused": true,
+          "isPrimary": false
+        }
+      ]
+    },
+    {
+      "name": "Zoé Sanchez",
+      "jobTitle": "Chef opérateur",
+      "phone": "06 01 23 45 30",
+      "email": "z.sanchez@dop.es",
+      "notes": "Style documentaire, lumière naturelle",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "Espagne",
+          "region": null,
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Matteo Rossi",
+      "jobTitle": "Chef Décorateur",
+      "phone": "+39 320 123 4531",
+      "email": "m.rossi@decor.it",
+      "notes": "Architecture italienne, charme authentique",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "Italie",
+          "region": null,
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Anna Schmidt",
+      "jobTitle": "Ingénieur du Son",
+      "phone": "+49 170 123 4532",
+      "email": "a.schmidt@sound.de",
+      "notes": "Matériel allemand haute précision",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "Allemagne",
+          "region": null,
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "James Wilson",
+      "jobTitle": "Superviseur VFX",
+      "phone": "+44 7700 123453",
+      "email": "j.wilson@vfx.uk",
+      "notes": "Hollywood experience, budgets élevés",
+      "isFavorite": true,
+      "locations": [
+        {
+          "country": "Royaume-Uni",
+          "region": null,
+          "isLocalResident": true,
+          "hasVehicle": false,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Amélie Lefebvre",
+      "jobTitle": "Cadreur",
+      "phone": "06 12 34 56 34",
+      "email": "a.lefebvre@cam.fr",
+      "notes": "Caméra épaule, reportage style",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Île-de-France",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Gabriel Moreau",
+      "jobTitle": "Cadreur",
+      "phone": "06 23 45 67 35",
+      "email": "g.moreau@steadicam.fr",
+      "notes": "Steadicam expert, mouvements fluides",
+      "isFavorite": true,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Provence-Alpes-Côte d'Azur",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Valentine Dubois",
+      "jobTitle": "Cadreur",
+      "phone": "06 34 56 78 36",
+      "email": "v.dubois@focus.fr",
+      "notes": "Jeune, dynamique, formations récentes",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Auvergne-Rhône-Alpes",
+          "isLocalResident": true,
+          "hasVehicle": false,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Martin Petit",
+      "jobTitle": "Cadreur",
+      "phone": "06 45 67 89 37",
+      "email": "m.petit@drone.fr",
+      "notes": "Pilote drone certifié, prises aériennes",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Occitanie",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Chloé Simon",
+      "jobTitle": "Cadreur",
+      "phone": "06 56 78 90 38",
+      "email": "c.simon@camera.fr",
+      "notes": "Polyvalente, adaptable, bonne humeur",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Bretagne",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Étienne Garcia",
+      "jobTitle": "Cadreur",
+      "phone": "06 67 89 01 39",
+      "email": "e.garcia@image.fr",
+      "notes": "Sport, action, caméra embarquée",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Nouvelle-Aquitaine",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Margot Laurent",
+      "jobTitle": "Ingénieur du Son",
+      "phone": "06 78 90 12 40",
+      "email": "m.laurent@audio.fr",
+      "notes": "Post-production, mixage, mastering",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Île-de-France",
+          "isLocalResident": true,
+          "hasVehicle": false,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Noah Bertrand",
+      "jobTitle": "Ingénieur du Son",
+      "phone": "06 89 01 23 41",
+      "email": "n.bertrand@sound.fr",
+      "notes": "Prise de son direct, ambiances",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Grand Est",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Lola Fabre",
+      "jobTitle": "Ingénieur du Son",
+      "phone": "06 90 12 34 42",
+      "email": "l.fabre@mix.fr",
+      "notes": "Studio mobile, tournages extérieurs",
+      "isFavorite": true,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Occitanie",
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Ryan O'Connor",
+      "jobTitle": "Chef opérateur",
+      "phone": "+1 555 123 4543",
+      "email": "r.oconnor@dop.us",
+      "notes": "Expérience Hollywood, visuel épique",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "États-Unis",
+          "region": null,
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Mohamed Benali",
+      "jobTitle": "Régisseur Général",
+      "phone": "+212 6 12 34 56 44",
+      "email": "m.benali@regie.ma",
+      "notes": "Expert Maroc, relations locales",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "Maroc",
+          "region": null,
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Fatima Zouari",
+      "jobTitle": "Assistant de Production",
+      "phone": "+216 20 123 456",
+      "email": "f.zouari@prod.tn",
+      "notes": "Coordination Tunisie, multilingue",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "Tunisie",
+          "region": null,
+          "isLocalResident": true,
+          "hasVehicle": false,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Erik Andersson",
+      "jobTitle": "Chef Électro",
+      "phone": "+46 70 123 4546",
+      "email": "e.andersson@light.se",
+      "notes": "Éclairage nordique, LED expert",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "Suède",
+          "region": null,
+          "isLocalResident": true,
+          "hasVehicle": true,
+          "isHoused": false,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Sophie Chen",
+      "jobTitle": "Motion Designer",
+      "phone": "06 01 23 45 47",
+      "email": "s.chen@motion.fr",
+      "notes": "After Effects, 3D, génériques stylés",
+      "isFavorite": false,
+      "locations": [
+        {
+          "country": "France",
+          "region": "Île-de-France",
+          "isLocalResident": true,
+          "hasVehicle": false,
+          "isHoused": true,
+          "isPrimary": true
+        }
+      ]
+    },
+    {
+      "name": "Adrien Blanchard",
+      "jobTitle": "Électro",
+      "phone": "06 12 34 56 48",
+      "email": "a.blanchard@light.fr",
+      "notes": "Jeune équ

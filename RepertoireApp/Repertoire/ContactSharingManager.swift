@@ -10,6 +10,23 @@ enum ExportFormat {
     case json
 }
 
+// Structure pour l'export/import de listes de contacts
+struct ContactListExport: Codable {
+    let version: String
+    let exportDate: Date
+    let totalContacts: Int
+    let filterDescription: String
+    let contacts: [ContactExportData.ContactData]
+    
+    init(contacts: [ContactExportData.ContactData], filterDescription: String = "Tous les contacts") {
+        self.version = "1.0"
+        self.exportDate = Date()
+        self.totalContacts = contacts.count
+        self.filterDescription = filterDescription
+        self.contacts = contacts
+    }
+}
+
 // Structure pour l'export/import des contacts
 struct ContactExportData: Codable {
     let version: String
@@ -76,73 +93,90 @@ class ContactSharingManager: ObservableObject {
     
     private init() {}
     
-    // Export selon le format choisi
-    func exportContact(_ contact: Contact, format: ExportFormat) -> (content: Any?, isFile: Bool) {
+    // Export d'une liste de contacts
+    func exportContactList(_ contacts: [Contact], format: ExportFormat, filterDescription: String = "Contacts sélectionnés") -> (content: Any?, isFile: Bool) {
         switch format {
         case .text:
-            return (exportContactAsText(contact), false)
+            return (exportContactListAsText(contacts, filterDescription: filterDescription), false)
         case .csv:
-            return (exportContactAsCSV(contact), true)
+            return (exportContactListAsCSV(contacts, filterDescription: filterDescription), true)
         case .json:
-            return (exportContactAsJSON(contact), true)
+            return (exportContactListAsJSON(contacts, filterDescription: filterDescription), true)
         }
     }
     
-    // Export en texte lisible
-    private func exportContactAsText(_ contact: Contact) -> String {
-        var text = "📋 FICHE CONTACT - RÉPERTOIRE\n"
-        text += "================================\n\n"
-        text += "👤 NOM: \(contact.name)\n"
-        text += "💼 POSTE: \(contact.jobTitle)\n"
+    // Export selon le format choisi (contact unique - conservé pour compatibilité)
+    func exportContact(_ contact: Contact, format: ExportFormat) -> (content: Any?, isFile: Bool) {
+        return exportContactList([contact], format: format, filterDescription: "Contact individuel")
+    }
+    
+    // Export de liste en texte lisible
+    private func exportContactListAsText(_ contacts: [Contact], filterDescription: String) -> String {
+        var text = "📋 LISTE CONTACTS - RÉPERTOIRE\n"
+        text += "===============================\n\n"
+        text += "📊 FILTRE: \(filterDescription)\n"
+        text += "👥 NOMBRE: \(contacts.count) contact(s)\n"
+        text += "📅 EXPORTÉ LE: \(DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .short))\n\n"
         
-        if !contact.phone.isEmpty {
-            text += "📞 TÉLÉPHONE: \(contact.phone)\n"
-        }
-        
-        if !contact.email.isEmpty {
-            text += "📧 EMAIL: \(contact.email)\n"
-        }
-        
-        text += "\n📍 LIEUX DE TRAVAIL:\n"
-        
-        // Lieu principal
-        if let primaryLoc = contact.primaryLocation {
-            text += "• PRINCIPAL: \(primaryLoc.country)"
-            if let region = primaryLoc.region {
-                text += " / \(region)"
+        for (index, contact) in contacts.enumerated() {
+            text += "▼ CONTACT \(index + 1)/\(contacts.count)\n"
+            text += "================================\n"
+            text += "👤 NOM: \(contact.name)\n"
+            text += "💼 POSTE: \(contact.jobTitle)\n"
+            
+            if !contact.phone.isEmpty {
+                text += "📞 TÉLÉPHONE: \(contact.phone)\n"
             }
             
-            var attributes: [String] = []
-            if primaryLoc.hasVehicle { attributes.append("Véhiculé") }
-            if primaryLoc.isHoused { attributes.append("Logé") }
-            if primaryLoc.isLocalResident { attributes.append("Résidence fiscale") }
-            
-            if !attributes.isEmpty {
-                text += " (\(attributes.joined(separator: ", ")))"
-            }
-            text += "\n"
-        }
-        
-        // Lieux secondaires
-        for (index, location) in contact.secondaryLocations.enumerated() {
-            text += "• SECONDAIRE \(index + 1): \(location.country)"
-            if let region = location.region {
-                text += " / \(region)"
+            if !contact.email.isEmpty {
+                text += "📧 EMAIL: \(contact.email)\n"
             }
             
-            var attributes: [String] = []
-            if location.hasVehicle { attributes.append("Véhiculé") }
-            if location.isHoused { attributes.append("Logé") }
-            if location.isLocalResident { attributes.append("Résidence fiscale") }
+            text += "\n📍 LIEUX DE TRAVAIL:\n"
             
-            if !attributes.isEmpty {
-                text += " (\(attributes.joined(separator: ", ")))"
+            // Lieu principal
+            if let primaryLoc = contact.primaryLocation {
+                text += "• PRINCIPAL: \(primaryLoc.country)"
+                if let region = primaryLoc.region {
+                    text += " / \(region)"
+                }
+                
+                var attributes: [String] = []
+                if primaryLoc.hasVehicle { attributes.append("Véhiculé") }
+                if primaryLoc.isHoused { attributes.append("Logé") }
+                if primaryLoc.isLocalResident { attributes.append("Résidence fiscale") }
+                
+                if !attributes.isEmpty {
+                    text += " (\(attributes.joined(separator: ", ")))"
+                }
+                text += "\n"
             }
-            text += "\n"
-        }
-        
-        if !contact.notes.isEmpty {
-            text += "\n📝 NOTES:\n\(contact.notes)\n"
+            
+            // Lieux secondaires
+            for (locIndex, location) in contact.secondaryLocations.enumerated() {
+                text += "• SECONDAIRE \(locIndex + 1): \(location.country)"
+                if let region = location.region {
+                    text += " / \(region)"
+                }
+                
+                var attributes: [String] = []
+                if location.hasVehicle { attributes.append("Véhiculé") }
+                if location.isHoused { attributes.append("Logé") }
+                if location.isLocalResident { attributes.append("Résidence fiscale") }
+                
+                if !attributes.isEmpty {
+                    text += " (\(attributes.joined(separator: ", ")))"
+                }
+                text += "\n"
+            }
+            
+            if !contact.notes.isEmpty {
+                text += "\n📝 NOTES:\n\(contact.notes)\n"
+            }
+            
+            if index < contacts.count - 1 {
+                text += "\n" + String(repeating: "=", count: 32) + "\n\n"
+            }
         }
         
         text += "\n================================\n"
@@ -151,30 +185,32 @@ class ContactSharingManager: ObservableObject {
         return text
     }
     
-    // Export en CSV
-    private func exportContactAsCSV(_ contact: Contact) -> URL? {
-        var csvContent = "Nom,Poste,Telephone,Email,Pays,Region,Vehicule,Loge,Residence_Fiscale,Type_Lieu,Notes\n"
+    // Export de liste en CSV
+    private func exportContactListAsCSV(_ contacts: [Contact], filterDescription: String) -> URL? {
+        var csvContent = "# Filtre: \(filterDescription)\n"
+        csvContent += "# Nombre de contacts: \(contacts.count)\n"
+        csvContent += "# Exporté le: \(DateFormatter.localizedString(from: Date(), dateStyle: .medium, timeStyle: .short))\n\n"
+        csvContent += "Nom,Poste,Telephone,Email,Pays,Region,Vehicule,Loge,Residence_Fiscale,Type_Lieu,Notes\n"
         
-        if contact.locations.isEmpty {
-            // Contact sans lieu
-            let notes = contact.notes.replacingOccurrences(of: "\"", with: "\"\"")
-            csvContent += "\"\(contact.name)\",\"\(contact.jobTitle)\",\"\(contact.phone)\",\"\(contact.email)\",,,,,,\"\(notes)\"\n"
-        } else {
-            // Une ligne par lieu
-            for location in contact.locations {
+        for contact in contacts {
+            if contact.locations.isEmpty {
+                // Contact sans lieu
                 let notes = contact.notes.replacingOccurrences(of: "\"", with: "\"\"")
-                let lieuType = location.isPrimary ? "Principal" : "Secondaire"
-                let region = location.region ?? ""
-                
-                csvContent += "\"\(contact.name)\",\"\(contact.jobTitle)\",\"\(contact.phone)\",\"\(contact.email)\",\"\(location.country)\",\"\(region)\",\(location.hasVehicle ? "Oui" : "Non"),\(location.isHoused ? "Oui" : "Non"),\(location.isLocalResident ? "Oui" : "Non"),\"\(lieuType)\",\"\(notes)\"\n"
+                csvContent += "\"\(contact.name)\",\"\(contact.jobTitle)\",\"\(contact.phone)\",\"\(contact.email)\",,,,,,\"\(notes)\"\n"
+            } else {
+                // Une ligne par lieu
+                for location in contact.locations {
+                    let notes = contact.notes.replacingOccurrences(of: "\"", with: "\"\"")
+                    let lieuType = location.isPrimary ? "Principal" : "Secondaire"
+                    let region = location.region ?? ""
+                    
+                    csvContent += "\"\(contact.name)\",\"\(contact.jobTitle)\",\"\(contact.phone)\",\"\(contact.email)\",\"\(location.country)\",\"\(region)\",\(location.hasVehicle ? "Oui" : "Non"),\(location.isHoused ? "Oui" : "Non"),\(location.isLocalResident ? "Oui" : "Non"),\"\(lieuType)\",\"\(notes)\"\n"
+                }
             }
         }
         
-        // Créer le fichier
-        let safeName = contact.name.replacingOccurrences(of: " ", with: "_")
-            .replacingOccurrences(of: "[^a-zA-Z0-9_-]", with: "", options: .regularExpression)
-        
-        let fileName = "Contact_\(safeName).csv"
+        // Créer un nom de fichier intelligent
+        let fileName = generateIntelligentFileName(for: contacts, format: "csv", filterDescription: filterDescription)
         let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
         
         do {
@@ -186,18 +222,23 @@ class ContactSharingManager: ObservableObject {
         }
     }
     
-    // Export en JSON
-    private func exportContactAsJSON(_ contact: Contact) -> URL? {
+    // Export de liste en JSON
+    private func exportContactListAsJSON(_ contacts: [Contact], filterDescription: String) -> URL? {
         do {
-            let exportData = contact.toExportData()
+            let contactsData = contacts.map { contact in
+                contact.toExportData().contact
+            }
+            
+            let listExport = ContactListExport(
+                contacts: contactsData,
+                filterDescription: filterDescription
+            )
+            
             let encoder = JSONEncoder()
             encoder.outputFormatting = .prettyPrinted
-            let jsonData = try encoder.encode(exportData)
+            let jsonData = try encoder.encode(listExport)
             
-            let safeName = contact.name.replacingOccurrences(of: " ", with: "_")
-                .replacingOccurrences(of: "[^a-zA-Z0-9_-]", with: "", options: .regularExpression)
-            
-            let fileName = "Contact_\(safeName).json"
+            let fileName = generateIntelligentFileName(for: contacts, format: "json", filterDescription: filterDescription)
             let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
             
             try jsonData.write(to: tempURL)
@@ -209,69 +250,153 @@ class ContactSharingManager: ObservableObject {
         }
     }
     
-    // Import d'un contact depuis URL (JSON ou CSV)
-    func importContact(from url: URL, context: ModelContext) throws -> Contact {
+    // Générer un nom de fichier intelligent basé sur les filtres
+    private func generateIntelligentFileName(for contacts: [Contact], format: String, filterDescription: String) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let dateString = dateFormatter.string(from: Date())
+        
+        var components: [String] = []
+        
+        // Analyser la description des filtres pour extraire les éléments clés
+        if filterDescription.contains("Poste:") {
+            if let jobRange = filterDescription.range(of: "Poste: ([^•]+)", options: .regularExpression) {
+                let job = String(filterDescription[jobRange]).replacingOccurrences(of: "Poste: ", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
+                let cleanJob = job.replacingOccurrences(of: " ", with: "_")
+                    .replacingOccurrences(of: "[^a-zA-Z0-9_-]", with: "", options: .regularExpression)
+                if !cleanJob.isEmpty {
+                    components.append(cleanJob)
+                }
+            }
+        }
+        
+        if filterDescription.contains("Pays:") {
+            if let countryRange = filterDescription.range(of: "Pays: ([^•]+)", options: .regularExpression) {
+                let country = String(filterDescription[countryRange]).replacingOccurrences(of: "Pays: ", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
+                let cleanCountry = country.replacingOccurrences(of: " ", with: "_")
+                if !cleanCountry.isEmpty {
+                    components.append(cleanCountry)
+                }
+            }
+        }
+        
+        if filterDescription.contains("Régions:") {
+            if let regionsRange = filterDescription.range(of: "Régions: ([^•]+)", options: .regularExpression) {
+                let regions = String(filterDescription[regionsRange]).replacingOccurrences(of: "Régions: ", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
+                let regionCount = regions.split(separator: ",").count
+                if regionCount == 1 {
+                    let cleanRegion = regions.replacingOccurrences(of: " ", with: "_")
+                        .replacingOccurrences(of: "[^a-zA-Z0-9_-]", with: "", options: .regularExpression)
+                    components.append(cleanRegion)
+                } else if regionCount > 1 {
+                    components.append("\(regionCount)_regions")
+                }
+            }
+        }
+        
+        // Si aucun filtre spécifique, utiliser un nom générique
+        if components.isEmpty {
+            components.append("Contacts")
+        }
+        
+        // Ajouter le nombre de contacts et la date
+        components.append("\(contacts.count)_contacts")
+        components.append(dateString)
+        
+        let fileName = components.joined(separator: "_") + ".\(format)"
+        
+        // Nettoyer le nom de fichier final
+        return fileName.replacingOccurrences(of: "__", with: "_")
+    }
+    
+    // Import d'un contact ou d'une liste depuis URL (JSON ou CSV)
+    func importContacts(from url: URL, context: ModelContext) throws -> [Contact] {
         let fileExtension = url.pathExtension.lowercased()
         
         switch fileExtension {
         case "json":
-            return try importFromJSON(url: url, context: context)
+            return try importFromJSONFile(url: url, context: context)
         case "csv":
-            return try importFromCSV(url: url, context: context)
+            return try importFromCSVFile(url: url, context: context)
         default:
             throw ImportError.unsupportedFormat
         }
     }
     
-    private func importFromJSON(url: URL, context: ModelContext) throws -> Contact {
+    private func importFromJSONFile(url: URL, context: ModelContext) throws -> [Contact] {
         let data = try Data(contentsOf: url)
-        let exportData = try JSONDecoder().decode(ContactExportData.self, from: data)
         
-        return try createContact(from: exportData, context: context)
+        // Essayer d'abord comme liste de contacts
+        if let listData = try? JSONDecoder().decode(ContactListExport.self, from: data) {
+            var importedContacts: [Contact] = []
+            
+            for contactData in listData.contacts {
+                let exportData = ContactExportData(contact: contactData)
+                let contact = try createContact(from: exportData, context: context)
+                importedContacts.append(contact)
+            }
+            
+            return importedContacts
+        }
+        
+        // Sinon essayer comme contact unique
+        if let singleContactData = try? JSONDecoder().decode(ContactExportData.self, from: data) {
+            let contact = try createContact(from: singleContactData, context: context)
+            return [contact]
+        }
+        
+        throw ImportError.invalidFormat
     }
     
-    private func importFromCSV(url: URL, context: ModelContext) throws -> Contact {
+    private func importFromCSVFile(url: URL, context: ModelContext) throws -> [Contact] {
         let content = try String(contentsOf: url, encoding: .utf8)
-        let lines = content.components(separatedBy: .newlines).filter { !$0.isEmpty }
+        let lines = content.components(separatedBy: .newlines).filter { !$0.isEmpty && !$0.hasPrefix("#") }
         
         guard lines.count > 1 else {
             throw ImportError.invalidFormat
         }
         
-        // Parser la première ligne de données (ignorer l'en-tête)
-        let firstDataLine = lines[1]
-        let columns = parseCSVLine(firstDataLine)
+        var contactsDict: [String: (contact: Contact, locations: [WorkLocation])] = [:]
         
-        guard columns.count >= 10 else {
-            throw ImportError.invalidFormat
-        }
-        
-        // Créer le contact de base
-        let contact = Contact(
-            name: columns[0],
-            jobTitle: columns[1],
-            phone: columns[2],
-            email: columns[3],
-            notes: columns[10],
-            isFavorite: false
-        )
-        
-        // Traiter tous les lieux
-        var locations: [WorkLocation] = []
-        var seenCountries = Set<String>()
-        
+        // Traiter chaque ligne de données (ignorer l'en-tête)
         for i in 1..<lines.count {
             let line = lines[i]
-            let cols = parseCSVLine(line)
-            if cols.count >= 10 {
-                let country = cols[4]
-                let region = cols[5].isEmpty ? nil : cols[5]
-                let hasVehicle = cols[6].lowercased() == "oui"
-                let isHoused = cols[7].lowercased() == "oui"
-                let isResident = cols[8].lowercased() == "oui"
-                let isPrimary = cols[9].lowercased().contains("principal")
+            let columns = parseCSVLine(line)
+            
+            guard columns.count >= 10 else { continue }
+            
+            let contactName = columns[0]
+            
+            // Si le contact n'existe pas encore, le créer
+            if contactsDict[contactName] == nil {
+                let contact = Contact(
+                    name: columns[0],
+                    jobTitle: columns[1],
+                    phone: columns[2],
+                    email: columns[3],
+                    notes: columns[10],
+                    isFavorite: false
+                )
+                context.insert(contact)
+                contactsDict[contactName] = (contact: contact, locations: [])
+            }
+            
+            // Ajouter le lieu s'il n'est pas vide
+            let country = columns[4]
+            if !country.isEmpty {
+                let region = columns[5].isEmpty ? nil : columns[5]
+                let hasVehicle = columns[6].lowercased() == "oui"
+                let isHoused = columns[7].lowercased() == "oui"
+                let isResident = columns[8].lowercased() == "oui"
+                let isPrimary = columns[9].lowercased().contains("principal")
                 
-                if !country.isEmpty && !seenCountries.contains(country) {
+                // Vérifier si ce lieu existe déjà pour ce contact
+                let existingLocations = contactsDict[contactName]!.locations
+                let locationExists = existingLocations.contains { location in
+                    location.country == country && location.region == region
+                }
+                
+                if !locationExists {
                     let location = WorkLocation(
                         country: country,
                         region: region,
@@ -281,17 +406,20 @@ class ContactSharingManager: ObservableObject {
                         isPrimary: isPrimary
                     )
                     context.insert(location)
-                    locations.append(location)
-                    seenCountries.insert(country)
+                    contactsDict[contactName]!.locations.append(location)
                 }
             }
         }
         
-        contact.locations = locations
-        context.insert(contact)
-        try context.save()
+        // Assigner les lieux aux contacts
+        var importedContacts: [Contact] = []
+        for (_, contactInfo) in contactsDict {
+            contactInfo.contact.locations = contactInfo.locations
+            importedContacts.append(contactInfo.contact)
+        }
         
-        return contact
+        try context.save()
+        return importedContacts
     }
     
     private func parseCSVLine(_ line: String) -> [String] {
