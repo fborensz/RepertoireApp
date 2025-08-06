@@ -5,7 +5,7 @@ import SwiftData
 struct RepertoireApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            SplashView() // Splash → Root → Content
         }
         .modelContainer(for: [Contact.self, WorkLocation.self])
     }

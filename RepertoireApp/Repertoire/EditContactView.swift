@@ -8,7 +8,6 @@ struct EditContactView: View {
     
     @State private var locations: [LocationData] = []
     
-    // Structure pour gérer les données des lieux
     struct LocationData: Identifiable {
         let id = UUID()
         var country: String = "Worldwide"
@@ -20,86 +19,81 @@ struct EditContactView: View {
     }
 
     var body: some View {
-        NavigationView {
-            Form {
-                Section(header: Text("Informations principales")) {
-                    TextField("Nom complet", text: $contact.name)
+        Form {
+            Section(header: Text("Informations principales").foregroundColor(MyCrewColors.accent)) {
+                TextField("Nom complet", text: $contact.name)
+                    .foregroundColor(MyCrewColors.textPrimary)
 
-                    Menu {
-                        ForEach(JobTitles.departments.keys.sorted(), id: \.self) { department in
-                            Section(header: Text(department)) {
-                                ForEach(JobTitles.departments[department]!, id: \.self) { job in
-                                    Button(job) { contact.jobTitle = job }
-                                }
+                Menu {
+                    ForEach(JobTitles.departments.keys.sorted(), id: \.self) { department in
+                        Section(header: Text(department)) {
+                            ForEach(JobTitles.departments[department]!, id: \.self) { job in
+                                Button(job) { contact.jobTitle = job }
                             }
                         }
+                    }
+                } label: {
+                    Label(contact.jobTitle.isEmpty ? "Choisir un poste" : contact.jobTitle,
+                          systemImage: "briefcase")
+                    .foregroundColor(MyCrewColors.accent)
+                }
+            }
+
+            ForEach(Array(locations.enumerated()), id: \.element.id) { index, _ in
+                Section(header: Text(index == 0 ? "Lieu principal" : "Lieu secondaire \(index)").foregroundColor(MyCrewColors.accent)) {
+                    locationSection(for: index)
+                }
+            }
+            
+            if locations.count < 5 {
+                Section {
+                    Button {
+                        locations.append(LocationData())
                     } label: {
-                        Label(contact.jobTitle.isEmpty ? "Choisir un poste" : contact.jobTitle,
-                              systemImage: "briefcase")
-                    }
-                }
-
-                // Lieux de travail
-                ForEach(Array(locations.enumerated()), id: \.element.id) { index, _ in
-                    Section(header: HStack {
-                        Text(index == 0 ? "Lieu principal" : "Lieu secondaire \(index)")
-                        Spacer()
-                        if locations.count > 1 {
-                            Button("Supprimer") {
-                                locations.remove(at: index)
-                            }
-                            .foregroundColor(.red)
-                            .font(.caption)
-                        }
-                    }) {
-                        locationSection(for: index)
-                    }
-                }
-                
-                // Bouton ajouter lieu (max 3)
-                if locations.count < 3 {
-                    Section {
-                        Button {
-                            locations.append(LocationData())
-                        } label: {
-                            Label("Ajouter un lieu", systemImage: "plus.circle")
-                        }
-                    }
-                }
-
-                Section(header: Text("Contact")) {
-                    TextField("Téléphone", text: $contact.phone)
-                        .keyboardType(.phonePad)
-                    TextField("Email", text: $contact.email)
-                        .keyboardType(.emailAddress)
-                }
-
-                Section(header: Text("Notes")) {
-                    TextField("Notes supplémentaires", text: $contact.notes, axis: .vertical)
-                        .lineLimit(3...6)
-                }
-                
-                Section(header: Text("Options")) {
-                    Toggle("Favori", isOn: $contact.isFavorite)
-                }
-            }
-            .navigationTitle("Modifier contact")
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Annuler") { dismiss() }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Enregistrer") {
-                        saveLocations()
-                        try? context.save()
-                        dismiss()
+                        Label("Ajouter un lieu", systemImage: "plus.circle")
+                            .foregroundColor(MyCrewColors.accent)
                     }
                 }
             }
-            .onAppear {
-                loadLocations()
+
+            Section(header: Text("Contact").foregroundColor(MyCrewColors.accent)) {
+                TextField("Téléphone", text: $contact.phone)
+                    .keyboardType(.phonePad)
+                    .foregroundColor(MyCrewColors.textPrimary)
+                TextField("Email", text: $contact.email)
+                    .keyboardType(.emailAddress)
+                    .foregroundColor(MyCrewColors.textPrimary)
+            }
+
+            Section(header: Text("Notes").foregroundColor(MyCrewColors.accent)) {
+                TextField("Notes supplémentaires", text: $contact.notes, axis: .vertical)
+                    .lineLimit(3...6)
+                    .foregroundColor(MyCrewColors.textPrimary)
+            }
+            
+            Section(header: Text("Options").foregroundColor(MyCrewColors.accent)) {
+                Toggle("Favori", isOn: $contact.isFavorite)
+                    .tint(MyCrewColors.accent)
             }
         }
+        .navigationTitle("Modifier Contact")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Annuler") { dismiss() }
+                    .foregroundColor(.red)
+            }
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Enregistrer") {
+                    saveLocations()
+                    try? context.save()
+                    dismiss()
+                }
+                .foregroundColor(MyCrewColors.accent)
+            }
+        }
+        .onAppear { loadLocations() }
+        .background(MyCrewColors.background.ignoresSafeArea())
     }
     
     @ViewBuilder
@@ -121,15 +115,13 @@ struct EditContactView: View {
             }
         }
         
-        Toggle("Véhiculé", isOn: $locations[index].hasVehicle)
-        Toggle("Logé", isOn: $locations[index].isHoused)
-        Toggle("Résidence fiscale", isOn: $locations[index].isLocalResident)
+        Toggle("Véhiculé", isOn: $locations[index].hasVehicle).tint(MyCrewColors.accent)
+        Toggle("Logé", isOn: $locations[index].isHoused).tint(MyCrewColors.accent)
+        Toggle("Résidence fiscale", isOn: $locations[index].isLocalResident).tint(MyCrewColors.accent)
     }
     
     private func loadLocations() {
         locations = []
-        
-        // Charger le lieu principal
         if let primaryLoc = contact.primaryLocation {
             locations.append(LocationData(
                 country: primaryLoc.country,
@@ -140,8 +132,6 @@ struct EditContactView: View {
                 isPrimary: true
             ))
         }
-        
-        // Charger les lieux secondaires
         for secondaryLoc in contact.secondaryLocations {
             locations.append(LocationData(
                 country: secondaryLoc.country,
@@ -152,35 +142,26 @@ struct EditContactView: View {
                 isPrimary: false
             ))
         }
-        
-        // S'assurer d'avoir au moins un lieu
-        if locations.isEmpty {
-            locations.append(LocationData(isPrimary: true))
-        }
+        if locations.isEmpty { locations.append(LocationData(isPrimary: true)) }
     }
     
     private func saveLocations() {
-        // Supprimer toutes les anciennes locations
         for oldLocation in contact.locations {
             context.delete(oldLocation)
         }
-        
-        // Créer les nouvelles locations
         var newLocations: [WorkLocation] = []
-        
-        for (index, locationData) in locations.enumerated() {
-            let workLocation = WorkLocation(
-                country: locationData.country,
-                region: locationData.region,
-                isLocalResident: locationData.isLocalResident,
-                hasVehicle: locationData.hasVehicle,
-                isHoused: locationData.isHoused,
-                isPrimary: index == 0 // Le premier est toujours principal
+        for (index, loc) in locations.enumerated() {
+            let newLocation = WorkLocation(
+                country: loc.country,
+                region: loc.region,
+                isLocalResident: loc.isLocalResident,
+                hasVehicle: loc.hasVehicle,
+                isHoused: loc.isHoused,
+                isPrimary: index == 0
             )
-            context.insert(workLocation)
-            newLocations.append(workLocation)
+            context.insert(newLocation)
+            newLocations.append(newLocation)
         }
-        
         contact.locations = newLocations
     }
 }
