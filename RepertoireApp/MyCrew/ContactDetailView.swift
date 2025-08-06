@@ -82,6 +82,20 @@ struct ContactDetailView: View {
                 }
             }
         }
+        .navigationBarBackButtonHidden()
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    HStack {
+                        Image(systemName: "chevron.left")
+                        Text("Mes Contacts")
+                    }
+                    .foregroundColor(MyCrewColors.accent)
+                }
+            }
+        }
         .background(MyCrewColors.background.ignoresSafeArea())
     }
     

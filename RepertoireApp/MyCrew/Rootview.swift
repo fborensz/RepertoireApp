@@ -19,16 +19,19 @@ struct RootView: View {
 
          
             }
-            .padding(.vertical, 6) // réduit l’espace vertical (~70% de moins)
+            .padding(.vertical, 6) // réduit l'espace vertical (~70% de moins)
             .background(MyCrewColors.background)
             
-            // Contenu de l’app
+            // Contenu de l'app
             NavigationView {
                 ContentView()
                     .navigationBarHidden(false) // cache le titre système
             }
+            .navigationViewStyle(StackNavigationViewStyle()) // Force un style cohérent
+            .accentColor(MyCrewColors.accent) // Force la couleur d'accent globale
             .background(MyCrewColors.background.ignoresSafeArea())
         }
         .background(MyCrewColors.background.ignoresSafeArea())
+        .preferredColorScheme(.light) // Force le mode clair pour toute l'app
     }
 }

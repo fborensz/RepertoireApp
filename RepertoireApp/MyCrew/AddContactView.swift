@@ -1,12 +1,17 @@
 import SwiftUI
 import SwiftData
 
-struct EditContactView: View {
+struct AddContactView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
-    @Bindable var contact: Contact
     
-    @State private var locations: [LocationData] = []
+    @State private var name = ""
+    @State private var jobTitle = ""
+    @State private var phone = ""
+    @State private var email = ""
+    @State private var notes = ""
+    @State private var isFavorite = false
+    @State private var locations: [LocationData] = [LocationData(isPrimary: true)]
     
     struct LocationData: Identifiable {
         let id = UUID()
@@ -17,32 +22,55 @@ struct EditContactView: View {
         var hasVehicle = false
         var isPrimary = false
     }
-
+    
     var body: some View {
         Form {
+            // Section Favori en premier
+            Section {
+                HStack {
+                    Button {
+                        isFavorite.toggle()
+                    } label: {
+                        HStack {
+                            Image(systemName: isFavorite ? "star.fill" : "star")
+                                .foregroundColor(isFavorite ? MyCrewColors.favoriteStar : MyCrewColors.textSecondary)
+                                .font(.title2)
+                            Text("Favori")
+                                .foregroundColor(MyCrewColors.textPrimary)
+                        }
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    
+                    Spacer()
+                }
+                .listRowBackground(MyCrewColors.cardBackground)
+            }
+            
             Section(header: Text("Informations principales").foregroundColor(MyCrewColors.accent)) {
-                TextField("Nom complet", text: $contact.name)
+                TextField("Nom complet", text: $name)
                     .foregroundColor(MyCrewColors.textPrimary)
-
+                
                 Menu {
                     ForEach(JobTitles.departments.keys.sorted(), id: \.self) { department in
                         Section(header: Text(department)) {
                             ForEach(JobTitles.departments[department]!, id: \.self) { job in
-                                Button(job) { contact.jobTitle = job }
+                                Button(job) { jobTitle = job }
                             }
                         }
                     }
                 } label: {
-                    Label(contact.jobTitle.isEmpty ? "Choisir un poste" : contact.jobTitle,
+                    Label(jobTitle.isEmpty ? "Choisir un poste" : jobTitle,
                           systemImage: "briefcase")
                     .foregroundColor(MyCrewColors.accent)
                 }
             }
-
+            .listRowBackground(MyCrewColors.cardBackground)
+            
             ForEach(Array(locations.enumerated()), id: \.element.id) { index, _ in
                 Section(header: Text(index == 0 ? "Lieu principal" : "Lieu secondaire \(index)").foregroundColor(MyCrewColors.accent)) {
                     locationSection(for: index)
                 }
+                .listRowBackground(MyCrewColors.cardBackground)
             }
             
             if locations.count < 5 {
@@ -54,29 +82,29 @@ struct EditContactView: View {
                             .foregroundColor(MyCrewColors.accent)
                     }
                 }
+                .listRowBackground(MyCrewColors.cardBackground)
             }
-
+            
             Section(header: Text("Contact").foregroundColor(MyCrewColors.accent)) {
-                TextField("Téléphone", text: $contact.phone)
+                TextField("Téléphone", text: $phone)
                     .keyboardType(.phonePad)
                     .foregroundColor(MyCrewColors.textPrimary)
-                TextField("Email", text: $contact.email)
+                TextField("Email", text: $email)
                     .keyboardType(.emailAddress)
                     .foregroundColor(MyCrewColors.textPrimary)
             }
-
+            .listRowBackground(MyCrewColors.cardBackground)
+            
             Section(header: Text("Notes").foregroundColor(MyCrewColors.accent)) {
-                TextField("Notes supplémentaires", text: $contact.notes, axis: .vertical)
+                TextField("Notes supplémentaires", text: $notes, axis: .vertical)
                     .lineLimit(3...6)
                     .foregroundColor(MyCrewColors.textPrimary)
             }
-            
-            Section(header: Text("Options").foregroundColor(MyCrewColors.accent)) {
-                Toggle("Favori", isOn: $contact.isFavorite)
-                    .tint(MyCrewColors.accent)
-            }
+            .listRowBackground(MyCrewColors.cardBackground)
         }
-        .navigationTitle("Modifier Contact")
+        .scrollContentBackground(.hidden)
+        .background(MyCrewColors.background)
+        .navigationTitle("Nouveau Contact")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
@@ -84,16 +112,52 @@ struct EditContactView: View {
                     .foregroundColor(.red)
             }
             ToolbarItem(placement: .confirmationAction) {
-                Button("Enregistrer") {
-                    saveLocations()
+                Button("Ajouter") {
+                    let newContact = Contact(
+                        name: name,
+                        jobTitle: jobTitle,
+                        phone: phone,
+                        email: email,
+                        notes: notes,
+                        isFavorite: isFavorite
+                    )
+                    
+                    var workLocations: [WorkLocation] = []
+                    for (index, locationData) in locations.enumerated() {
+                        let workLocation = WorkLocation(
+                            country: locationData.country,
+                            region: locationData.region,
+                            isLocalResident: locationData.isLocalResident,
+                            hasVehicle: locationData.hasVehicle,
+                            isHoused: locationData.isHoused,
+                            isPrimary: index == 0
+                        )
+                        context.insert(workLocation)
+                        workLocations.append(workLocation)
+                    }
+                    newContact.locations = workLocations
+                    context.insert(newContact)
                     try? context.save()
                     dismiss()
                 }
+                .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || jobTitle.isEmpty)
                 .foregroundColor(MyCrewColors.accent)
             }
         }
-        .onAppear { loadLocations() }
-        .background(MyCrewColors.background.ignoresSafeArea())
+        .navigationBarBackButtonHidden()
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    HStack {
+                        Image(systemName: "chevron.left")
+                        Text("Retour")
+                    }
+                    .foregroundColor(MyCrewColors.accent)
+                }
+            }
+        }
     }
     
     @ViewBuilder
@@ -118,50 +182,5 @@ struct EditContactView: View {
         Toggle("Véhiculé", isOn: $locations[index].hasVehicle).tint(MyCrewColors.accent)
         Toggle("Logé", isOn: $locations[index].isHoused).tint(MyCrewColors.accent)
         Toggle("Résidence fiscale", isOn: $locations[index].isLocalResident).tint(MyCrewColors.accent)
-    }
-    
-    private func loadLocations() {
-        locations = []
-        if let primaryLoc = contact.primaryLocation {
-            locations.append(LocationData(
-                country: primaryLoc.country,
-                region: primaryLoc.region,
-                isHoused: primaryLoc.isHoused,
-                isLocalResident: primaryLoc.isLocalResident,
-                hasVehicle: primaryLoc.hasVehicle,
-                isPrimary: true
-            ))
-        }
-        for secondaryLoc in contact.secondaryLocations {
-            locations.append(LocationData(
-                country: secondaryLoc.country,
-                region: secondaryLoc.region,
-                isHoused: secondaryLoc.isHoused,
-                isLocalResident: secondaryLoc.isLocalResident,
-                hasVehicle: secondaryLoc.hasVehicle,
-                isPrimary: false
-            ))
-        }
-        if locations.isEmpty { locations.append(LocationData(isPrimary: true)) }
-    }
-    
-    private func saveLocations() {
-        for oldLocation in contact.locations {
-            context.delete(oldLocation)
-        }
-        var newLocations: [WorkLocation] = []
-        for (index, loc) in locations.enumerated() {
-            let newLocation = WorkLocation(
-                country: loc.country,
-                region: loc.region,
-                isLocalResident: loc.isLocalResident,
-                hasVehicle: loc.hasVehicle,
-                isHoused: loc.isHoused,
-                isPrimary: index == 0
-            )
-            context.insert(newLocation)
-            newLocations.append(newLocation)
-        }
-        contact.locations = newLocations
     }
 }
