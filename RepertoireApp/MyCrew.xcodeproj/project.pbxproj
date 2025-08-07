@@ -195,6 +195,9 @@
 			);
 			mainGroup = 6F60538A2E4251FE00438E20;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				6F8C73AA2E44F41A000B4000 /* XCRemoteSwiftPackageReference "EFQRCode" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6F6053942E4251FE00438E20 /* Products */;
 			projectDirPath = "";
@@ -552,6 +555,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		6F8C73AA2E44F41A000B4000 /* XCRemoteSwiftPackageReference "EFQRCode" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/EFPrefix/EFQRCode";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.0.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
 	};
 	rootObject = 6F60538B2E4251FE00438E20 /* Project object */;
 }

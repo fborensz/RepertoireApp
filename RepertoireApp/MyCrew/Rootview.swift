@@ -5,33 +5,29 @@ struct RootView: View {
         VStack(spacing: 0) {
             // Header customisé
             HStack {
-                
                 Image("MyCrewLogo")
                     .resizable()
                     .scaledToFit()
                     .frame(width: 80, height: 80)
                 
-                
                 Text("Trouvez, contactez, tournez")
                     .font(.headline)
                     .foregroundColor(MyCrewColors.accent)
                     .padding(.leading, 12)
-
-         
             }
-            .padding(.vertical, 6) // réduit l'espace vertical (~70% de moins)
+            .padding(.vertical, 6)
             .background(MyCrewColors.background)
             
-            // Contenu de l'app
+            // Contenu de l'app (suppression du bloc ma fiche pro permanent)
             NavigationView {
                 ContentView()
-                    .navigationBarHidden(false) // cache le titre système
+                    .navigationBarHidden(false)
             }
-            .navigationViewStyle(StackNavigationViewStyle()) // Force un style cohérent
-            .accentColor(MyCrewColors.accent) // Force la couleur d'accent globale
+            .navigationViewStyle(StackNavigationViewStyle())
+            .accentColor(MyCrewColors.accent)
             .background(MyCrewColors.background.ignoresSafeArea())
         }
         .background(MyCrewColors.background.ignoresSafeArea())
-        .preferredColorScheme(.light) // Force le mode clair pour toute l'app
+        .preferredColorScheme(.light)
     }
 }

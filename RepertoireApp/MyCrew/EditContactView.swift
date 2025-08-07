@@ -15,6 +15,7 @@ struct EditContactView: View {
     @State private var isFavorite: Bool = false
     @State private var locations: [LocationData] = []
     @State private var showingDeleteAlert = false
+    @State private var showingResidenceAlert = false // Pour l'alerte résidence fiscale
     
     struct LocationData: Identifiable {
         let id = UUID()
@@ -196,6 +197,11 @@ struct EditContactView: View {
         } message: {
             Text("Êtes-vous sûr de vouloir supprimer \(contact.name) ? Cette action est irréversible.")
         }
+        .alert("Résidence fiscale unique", isPresented: $showingResidenceAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("Vous ne pouvez avoir qu'une seule résidence fiscale")
+        }
     }
     
     @ViewBuilder
@@ -219,7 +225,25 @@ struct EditContactView: View {
         
         Toggle("Véhiculé", isOn: $locations[index].hasVehicle).tint(MyCrewColors.accent)
         Toggle("Logé", isOn: $locations[index].isHoused).tint(MyCrewColors.accent)
-        Toggle("Résidence fiscale", isOn: $locations[index].isLocalResident).tint(MyCrewColors.accent)
+        Toggle("Résidence fiscale", isOn: Binding(
+            get: { locations[index].isLocalResident },
+            set: { newValue in
+                if newValue {
+                    // Vérifier s'il y a déjà une résidence fiscale
+                    let hasExistingResident = locations.enumerated().contains { (idx, loc) in
+                        idx != index && loc.isLocalResident
+                    }
+                    
+                    if hasExistingResident {
+                        showingResidenceAlert = true
+                    } else {
+                        locations[index].isLocalResident = true
+                    }
+                } else {
+                    locations[index].isLocalResident = false
+                }
+            }
+        )).tint(MyCrewColors.accent)
     }
     
     // Charger les données du contact dans les variables d'état locales

@@ -8,7 +8,8 @@ struct ContentView: View {
     @State private var showingImport = false
     @State private var showingListExportOptions = false
     @State private var currentFilters = FilterSettings()
-    @State private var searchText = "" // Nouvelle propriété pour la recherche
+    @State private var searchText = ""
+    @State private var userProfile = UserProfile.load() ?? UserProfile.example() // Ajout du profil utilisateur
 
     struct FilterSettings {
         var selectedJob = "Tous"
@@ -106,6 +107,11 @@ struct FilterTag: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            // Ma fiche pro (NOUVEAUTÉ - au bon endroit)
+            UserProfileHeaderView(userProfile: $userProfile)
+                .padding(.horizontal)
+                .padding(.bottom, 8)
+            
             // Barre de filtres et actions
             HStack {
                 Button {
