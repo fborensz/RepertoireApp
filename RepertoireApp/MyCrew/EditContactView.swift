@@ -25,6 +25,36 @@ struct EditContactView: View {
         var hasVehicle = false
         var isPrimary = false
     }
+    
+    // Fonction séparée pour éviter les problèmes de compilation SwiftUI
+    @ViewBuilder
+    private func locationSectionView(for index: Int) -> some View {
+        Section(header: locationHeader(for: index)) {
+            locationSection(for: index)
+        }
+        .listRowBackground(MyCrewColors.cardBackground)
+    }
+    
+    @ViewBuilder
+    private func locationHeader(for index: Int) -> some View {
+        HStack {
+            Text(index == 0 ? "Lieu principal" : "Lieu secondaire \(index)")
+                .foregroundColor(MyCrewColors.accent)
+            Spacer()
+            if locations.count > 1 && index > 0 {
+                Button {
+                    withAnimation {
+                        let _ = locations.remove(at: index)
+                    }
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.red)
+                        .font(.title3)
+                }
+                .buttonStyle(BorderlessButtonStyle())
+            }
+        }
+    }
 
     var body: some View {
         Form {
@@ -70,10 +100,7 @@ struct EditContactView: View {
             .listRowBackground(MyCrewColors.cardBackground)
 
             ForEach(Array(locations.enumerated()), id: \.element.id) { index, _ in
-                Section(header: Text(index == 0 ? "Lieu principal" : "Lieu secondaire \(index)").foregroundColor(MyCrewColors.accent)) {
-                    locationSection(for: index)
-                }
-                .listRowBackground(MyCrewColors.cardBackground)
+                locationSectionView(for: index)
             }
             
             if locations.count < 5 {
@@ -155,14 +182,7 @@ struct EditContactView: View {
         .alert("Supprimer le contact", isPresented: $showingDeleteAlert) {
             Button("Annuler", role: .cancel) { }
             Button("Supprimer", role: .destructive) {
-                // Supprimer les lieux associés
-                for location in contact.locations {
-                    context.delete(location)
-                }
-                // Supprimer le contact
-                context.delete(contact)
-                try? context.save()
-                dismiss()
+                deleteContact()
             }
         } message: {
             Text("Êtes-vous sûr de vouloir supprimer \(contact.name) ? Cette action est irréversible.")
@@ -203,7 +223,15 @@ struct EditContactView: View {
         isFavorite = contact.isFavorite
         
         locations = []
-        if let primaryLoc = contact.primaryLocation {
+        
+        // Vérification de sécurité pour éviter les crashes SwiftData
+        guard !contact.locations.isEmpty else {
+            locations.append(LocationData(isPrimary: true))
+            return
+        }
+        
+        // Charger le lieu principal en premier
+        if let primaryLoc = contact.locations.first(where: { $0.isPrimary }) {
             locations.append(LocationData(
                 country: primaryLoc.country,
                 region: primaryLoc.region,
@@ -213,7 +241,10 @@ struct EditContactView: View {
                 isPrimary: true
             ))
         }
-        for secondaryLoc in contact.secondaryLocations {
+        
+        // Charger les lieux secondaires
+        let secondaryLocations = contact.locations.filter { !$0.isPrimary }
+        for secondaryLoc in secondaryLocations {
             locations.append(LocationData(
                 country: secondaryLoc.country,
                 region: secondaryLoc.region,
@@ -223,7 +254,11 @@ struct EditContactView: View {
                 isPrimary: false
             ))
         }
-        if locations.isEmpty { locations.append(LocationData(isPrimary: true)) }
+        
+        // S'assurer qu'il y a au moins un lieu principal
+        if locations.isEmpty {
+            locations.append(LocationData(isPrimary: true))
+        }
     }
     
     // Sauvegarder uniquement quand on appuie sur "Enregistrer"
@@ -236,8 +271,11 @@ struct EditContactView: View {
         contact.notes = notes
         contact.isFavorite = isFavorite
         
-        // Supprimer les anciens lieux
-        for oldLocation in contact.locations {
+        // Supprimer les anciens lieux en sécurité
+        let oldLocations = contact.locations
+        contact.locations = []
+        
+        for oldLocation in oldLocations {
             context.delete(oldLocation)
         }
         
@@ -255,9 +293,42 @@ struct EditContactView: View {
             context.insert(newLocation)
             newLocations.append(newLocation)
         }
+        
+        // Assigner les nouveaux lieux au contact
         contact.locations = newLocations
         
         // Sauvegarder en base
-        try? context.save()
+        do {
+            try context.save()
+        } catch {
+            print("Erreur lors de la sauvegarde: \(error)")
+        }
+    }
+    
+    // Fonction de suppression sécurisée
+    private func deleteContact() {
+        // Copier la liste des lieux pour éviter les accès concurrents
+        let locationsToDelete = contact.locations
+        
+        // Déconnecter le contact de ses lieux
+        contact.locations = []
+        
+        // Supprimer les lieux en sécurité
+        for location in locationsToDelete {
+            context.delete(location)
+        }
+        
+        // Supprimer le contact
+        context.delete(contact)
+        
+        // Sauvegarder
+        do {
+            try context.save()
+        } catch {
+            print("Erreur lors de la suppression: \(error)")
+        }
+        
+        // Fermer la vue
+        dismiss()
     }
 }

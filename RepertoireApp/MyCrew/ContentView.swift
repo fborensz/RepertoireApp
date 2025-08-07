@@ -18,6 +18,48 @@ struct ContentView: View {
         var includeResident = false
     }
 
+// MARK: - FilterTag
+struct FilterTag: View {
+    let text: String
+    let icon: String?
+    let onRemove: () -> Void
+    
+    init(text: String, icon: String? = nil, onRemove: @escaping () -> Void) {
+        self.text = text
+        self.icon = icon
+        self.onRemove = onRemove
+    }
+    
+    var body: some View {
+        Button {
+            onRemove()
+        } label: {
+            HStack(spacing: 4) {
+                if let icon = icon {
+                    Image(systemName: icon)
+                        .font(.caption2)
+                        .foregroundColor(MyCrewColors.accent)
+                }
+                Text(text)
+                    .font(.caption)
+                    .foregroundColor(MyCrewColors.textPrimary)
+                Image(systemName: "xmark.circle.fill")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(MyCrewColors.cardBackground)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(MyCrewColors.accent.opacity(0.3), lineWidth: 1)
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+
     private var filteredAndSortedContacts: [Contact] {
         let filtered = filteredContacts
         return filtered.sorted {
@@ -50,6 +92,7 @@ struct ContentView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            // Barre de filtres et actions
             HStack {
                 Button {
                     showingFilters.toggle()
@@ -62,24 +105,39 @@ struct ContentView: View {
                     }
                 }
                 
-                Spacer()
-                
                 if hasActiveFilters {
-                    Button("Tout effacer") {
+                    Button("Effacer") {
                         currentFilters = FilterSettings()
                     }
                     .font(.caption)
                     .foregroundColor(.red)
+                    .padding(.leading, 8)
                 }
                 
-                if !contacts.isEmpty {
+                Spacer()
+                
+                HStack(spacing: 16) {
+                    if !contacts.isEmpty {
+                        Button {
+                            showingListExportOptions = true
+                        } label: {
+                            HStack {
+                                Image(systemName: "square.and.arrow.up.on.square")
+                                    .font(.caption)
+                                Text("Exporter")
+                                    .font(.caption)
+                            }
+                        }
+                        .foregroundColor(MyCrewColors.accent)
+                    }
+                    
                     Button {
-                        showingListExportOptions = true
+                        showingImport = true
                     } label: {
                         HStack {
-                            Image(systemName: "square.and.arrow.up.on.square")
+                            Image(systemName: "square.and.arrow.down.on.square")
                                 .font(.caption)
-                            Text("Exporter")
+                            Text("Importer")
                                 .font(.caption)
                         }
                     }
@@ -88,6 +146,57 @@ struct ContentView: View {
             }
             .padding(.horizontal)
             .padding(.vertical, 8)
+            
+            // Affichage des filtres actifs
+            if hasActiveFilters {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        // Filtre métier
+                        if currentFilters.selectedJob != "Tous" {
+                            FilterTag(text: "Poste: \(currentFilters.selectedJob)") {
+                                currentFilters.selectedJob = "Tous"
+                            }
+                        }
+                        
+                        // Filtre pays
+                        if currentFilters.selectedCountry != "Tous" {
+                            FilterTag(text: "Pays: \(currentFilters.selectedCountry)") {
+                                currentFilters.selectedCountry = "Tous"
+                                currentFilters.selectedRegions.removeAll()
+                            }
+                        }
+                        
+                        // Filtres régions
+                        ForEach(Array(currentFilters.selectedRegions), id: \.self) { region in
+                            FilterTag(text: region) {
+                                currentFilters.selectedRegions.remove(region)
+                            }
+                        }
+                        
+                        // Filtres attributs
+                        if currentFilters.includeVehicle {
+                            FilterTag(text: "Véhiculé", icon: "car.fill") {
+                                currentFilters.includeVehicle = false
+                            }
+                        }
+                        
+                        if currentFilters.includeHoused {
+                            FilterTag(text: "Logé", icon: "house.fill") {
+                                currentFilters.includeHoused = false
+                            }
+                        }
+                        
+                        if currentFilters.includeResident {
+                            FilterTag(text: "Résidence fiscale", icon: "building.columns.fill") {
+                                currentFilters.includeResident = false
+                            }
+                        }
+                    }
+                    .padding(.horizontal)
+                }
+                .padding(.vertical, 8)
+                .background(MyCrewColors.background)
+            }
             
             Group {
                 if filteredAndSortedContacts.isEmpty && !contacts.isEmpty {
@@ -152,6 +261,157 @@ struct ContentView: View {
         }
         .background(MyCrewColors.background.ignoresSafeArea())
         .preferredColorScheme(.light) // Force le mode clair
+        .sheet(isPresented: $showingFilters) {
+            FilterModalView(filters: $currentFilters, contacts: contacts)
+        }
+        .sheet(isPresented: $showingListExportOptions) {
+            ExportOptionsView(contacts: filteredAndSortedContacts, filterDescription: getFilterDescription())
+        }
+        .sheet(isPresented: $showingImport) {
+            ImportView()
+        }
+    }
+    
+    private func getFilterDescription() -> String {
+        var description: [String] = []
+        
+        if currentFilters.selectedJob != "Tous" {
+            description.append("Poste: \(currentFilters.selectedJob)")
+        }
+        
+        if currentFilters.selectedCountry != "Tous" {
+            description.append("Pays: \(currentFilters.selectedCountry)")
+        }
+        
+        if !currentFilters.selectedRegions.isEmpty {
+            let regions = Array(currentFilters.selectedRegions).sorted().joined(separator: ", ")
+            description.append("Régions: \(regions)")
+        }
+        
+        var attributes: [String] = []
+        if currentFilters.includeVehicle { attributes.append("Véhiculé") }
+        if currentFilters.includeHoused { attributes.append("Logé") }
+        if currentFilters.includeResident { attributes.append("Résidence fiscale") }
+        
+        if !attributes.isEmpty {
+            description.append("Critères: \(attributes.joined(separator: ", "))")
+        }
+        
+        return description.isEmpty ? "Tous les contacts" : description.joined(separator: " • ")
+    }
+}
+
+// MARK: - FilterModalView
+struct FilterModalView: View {
+    @Binding var filters: ContentView.FilterSettings
+    @Environment(\.dismiss) private var dismiss
+    let contacts: [Contact]
+    
+    private var availableJobs: [String] {
+        let jobs = Set(contacts.map { $0.jobTitle })
+        return ["Tous"] + jobs.sorted()
+    }
+    
+    private var availableCountries: [String] {
+        let countries = Set(contacts.flatMap { contact in
+            contact.locations.map { $0.country }
+        })
+        return ["Tous"] + countries.sorted()
+    }
+    
+    var body: some View {
+        NavigationView {
+            Form {
+                Section(header: Text("Métier").foregroundColor(MyCrewColors.accent)) {
+                    Picker("Poste", selection: $filters.selectedJob) {
+                        ForEach(availableJobs, id: \.self) { job in
+                            Text(job).tag(job)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                }
+                .listRowBackground(MyCrewColors.cardBackground)
+                
+                Section(header: Text("Localisation").foregroundColor(MyCrewColors.accent)) {
+                    Picker("Pays", selection: $filters.selectedCountry) {
+                        ForEach(availableCountries, id: \.self) { country in
+                            Text(country).tag(country)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    
+                    if filters.selectedCountry == "France" {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Régions")
+                                .font(.subheadline)
+                                .foregroundColor(MyCrewColors.accent)
+                            
+                            LazyVGrid(columns: [
+                                GridItem(.flexible()),
+                                GridItem(.flexible())
+                            ], spacing: 8) {
+                                ForEach(Locations.frenchRegions, id: \.self) { region in
+                                    Button {
+                                        if filters.selectedRegions.contains(region) {
+                                            filters.selectedRegions.remove(region)
+                                        } else {
+                                            filters.selectedRegions.insert(region)
+                                        }
+                                    } label: {
+                                        HStack {
+                                            Image(systemName: filters.selectedRegions.contains(region) ? "checkmark.circle.fill" : "circle")
+                                                .foregroundColor(filters.selectedRegions.contains(region) ? MyCrewColors.accent : .secondary)
+                                            Text(region)
+                                                .font(.caption)
+                                                .foregroundColor(MyCrewColors.textPrimary)
+                                        }
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                }
+                            }
+                        }
+                        .padding(.vertical, 8)
+                    }
+                }
+                .listRowBackground(MyCrewColors.cardBackground)
+                
+                Section(header: Text("Critères").foregroundColor(MyCrewColors.accent)) {
+                    Toggle("Véhiculé", isOn: $filters.includeVehicle)
+                        .tint(MyCrewColors.accent)
+                    Toggle("Logé", isOn: $filters.includeHoused)
+                        .tint(MyCrewColors.accent)
+                    Toggle("Résidence fiscale", isOn: $filters.includeResident)
+                        .tint(MyCrewColors.accent)
+                }
+                .listRowBackground(MyCrewColors.cardBackground)
+                
+                Section {
+                    Button("Effacer tous les filtres") {
+                        filters = ContentView.FilterSettings()
+                    }
+                    .foregroundColor(.red)
+                }
+                .listRowBackground(MyCrewColors.cardBackground)
+            }
+            .scrollContentBackground(.hidden)
+            .background(MyCrewColors.background)
+            .navigationTitle("Filtres")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Annuler") {
+                        dismiss()
+                    }
+                    .foregroundColor(.red)
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Appliquer") {
+                        dismiss()
+                    }
+                    .foregroundColor(MyCrewColors.accent)
+                }
+            }
+        }
     }
 }
 

@@ -23,6 +23,36 @@ struct AddContactView: View {
         var isPrimary = false
     }
     
+    // Fonction séparée pour éviter les problèmes de compilation SwiftUI
+    @ViewBuilder
+    private func locationSectionView(for index: Int) -> some View {
+        Section(header: locationHeader(for: index)) {
+            locationSection(for: index)
+        }
+        .listRowBackground(MyCrewColors.cardBackground)
+    }
+    
+    @ViewBuilder
+    private func locationHeader(for index: Int) -> some View {
+        HStack {
+            Text(index == 0 ? "Lieu principal" : "Lieu secondaire \(index)")
+                .foregroundColor(MyCrewColors.accent)
+            Spacer()
+            if locations.count > 1 && index > 0 {
+                Button {
+                    withAnimation {
+                        let _ = locations.remove(at: index)
+                    }
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.red)
+                        .font(.title3)
+                }
+                .buttonStyle(BorderlessButtonStyle())
+            }
+        }
+    }
+    
     var body: some View {
         Form {
             // Section Favori en premier
@@ -67,10 +97,7 @@ struct AddContactView: View {
             .listRowBackground(MyCrewColors.cardBackground)
             
             ForEach(Array(locations.enumerated()), id: \.element.id) { index, _ in
-                Section(header: Text(index == 0 ? "Lieu principal" : "Lieu secondaire \(index)").foregroundColor(MyCrewColors.accent)) {
-                    locationSection(for: index)
-                }
-                .listRowBackground(MyCrewColors.cardBackground)
+                locationSectionView(for: index)
             }
             
             if locations.count < 5 {

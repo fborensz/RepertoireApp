@@ -76,9 +76,18 @@ struct ContactDetailView: View {
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                NavigationLink(destination: EditContactView(contact: contact)) {
-                    Text("Modifier")
-                        .foregroundColor(MyCrewColors.accent)
+                HStack(spacing: 16) {
+                    Button {
+                        exportContact()
+                    } label: {
+                        Image(systemName: "square.and.arrow.up")
+                            .foregroundColor(MyCrewColors.accent)
+                    }
+                    
+                    NavigationLink(destination: EditContactView(contact: contact)) {
+                        Text("Modifier")
+                            .foregroundColor(MyCrewColors.accent)
+                    }
                 }
             }
         }
@@ -97,6 +106,20 @@ struct ContactDetailView: View {
             }
         }
         .background(MyCrewColors.background.ignoresSafeArea())
+    }
+    
+    private func exportContact() {
+        let sharingManager = ContactSharingManager.shared
+        let result = sharingManager.exportContact(contact, format: .json)
+        
+        if let url = result.content as? URL {
+            let activityVC = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+            
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let window = windowScene.windows.first {
+                window.rootViewController?.present(activityVC, animated: true)
+            }
+        }
     }
     
     private func locationAttributesView(for location: WorkLocation) -> some View {
