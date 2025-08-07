@@ -308,7 +308,15 @@ struct FilterModalView: View {
     let contacts: [Contact]
     
     private var availableJobs: [String] {
-        let jobs = Set(contacts.map { $0.jobTitle })
+        let allJobsInDatabase = Set(contacts.map { $0.jobTitle })
+        let standardJobs = Set(JobTitles.allAvailableJobs)
+        
+        // Inclure "À définir" seulement s'il existe dans la base
+        var jobs = standardJobs
+        if allJobsInDatabase.contains(JobTitles.defaultJob) {
+            jobs.insert(JobTitles.defaultJob)
+        }
+        
         return ["Tous"] + jobs.sorted()
     }
     

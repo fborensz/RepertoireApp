@@ -83,7 +83,16 @@ struct EditContactView: View {
                 TextField("Nom complet", text: $name)
                     .foregroundColor(MyCrewColors.textPrimary)
 
+                // Menu modifié pour inclure "À définir" s'il est déjà sélectionné
                 Menu {
+                    // Ajouter "À définir" seulement s'il est déjà la valeur actuelle
+                    if jobTitle == JobTitles.defaultJob {
+                        Button(JobTitles.defaultJob) {
+                            jobTitle = JobTitles.defaultJob
+                        }
+                        Divider()
+                    }
+                    
                     ForEach(JobTitles.departments.keys.sorted(), id: \.self) { department in
                         Section(header: Text(department)) {
                             ForEach(JobTitles.departments[department]!, id: \.self) { job in

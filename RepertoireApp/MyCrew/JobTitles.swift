@@ -3,6 +3,9 @@
 import Foundation
 
 struct JobTitles {
+    // Métier spécial pour les imports (non visible dans les menus)
+    static let defaultJob = "À définir"
+    
     static let departments: [String: [String]] = [
         "Réalisation": [
             "Réalisateur",
@@ -96,4 +99,14 @@ struct JobTitles {
             "Chef Cuisinier Plateau"
         ]
     ]
+    
+    // Fonction pour obtenir tous les métiers disponibles dans l'interface
+    static var allAvailableJobs: [String] {
+        return departments.values.flatMap { $0 }.sorted()
+    }
+    
+    // Fonction pour vérifier si un métier est valide (inclut "À définir")
+    static func isValidJob(_ job: String) -> Bool {
+        return job == defaultJob || allAvailableJobs.contains(job)
+    }
 }
