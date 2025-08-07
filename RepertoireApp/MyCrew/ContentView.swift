@@ -8,6 +8,7 @@ struct ContentView: View {
     @State private var showingImport = false
     @State private var showingListExportOptions = false
     @State private var currentFilters = FilterSettings()
+    @State private var searchText = "" // Nouvelle propriété pour la recherche
 
     struct FilterSettings {
         var selectedJob = "Tous"
@@ -77,8 +78,21 @@ struct FilterTag: View {
     }
 
     private var filteredContacts: [Contact] {
-        if !hasActiveFilters { return contacts }
-        return contacts.filter { $0.matchesFilters(filters: currentFilters) }
+        var result = contacts
+        
+        // Appliquer les filtres d'abord
+        if hasActiveFilters {
+            result = result.filter { $0.matchesFilters(filters: currentFilters) }
+        }
+        
+        // Appliquer la recherche ensuite
+        if !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            result = result.filter { contact in
+                matchesSearch(contact: contact, searchText: searchText)
+            }
+        }
+        
+        return result
     }
 
     private var hasActiveFilters: Bool {
@@ -147,6 +161,38 @@ struct FilterTag: View {
             .padding(.horizontal)
             .padding(.vertical, 8)
             
+            // Barre de recherche (NOUVEAUTÉ)
+            HStack {
+                HStack {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundColor(.secondary)
+                        .font(.system(size: 16))
+                    
+                    TextField("Rechercher un nom, métier, lieu...", text: $searchText)
+                        .foregroundColor(MyCrewColors.textPrimary)
+                    
+                    if !searchText.isEmpty {
+                        Button {
+                            searchText = ""
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(.secondary)
+                                .font(.system(size: 16))
+                        }
+                    }
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(MyCrewColors.cardBackground)
+                .cornerRadius(10)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(searchText.isEmpty ? Color.clear : MyCrewColors.accent.opacity(0.3), lineWidth: 1)
+                )
+            }
+            .padding(.horizontal)
+            .padding(.bottom, 8)
+            
             // Affichage des filtres actifs
             if hasActiveFilters {
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -208,10 +254,18 @@ struct FilterTag: View {
                             .font(.title2)
                             .foregroundColor(MyCrewColors.textPrimary)
                             .fontWeight(.semibold)
-                        Text("Essayez d'ajuster vos filtres")
-                            .font(.subheadline)
-                            .foregroundColor(MyCrewColors.textSecondary)
-                            .multilineTextAlignment(.center)
+                        
+                        if !searchText.isEmpty {
+                            Text("Aucun contact trouvé pour \"\(searchText)\"")
+                                .font(.subheadline)
+                                .foregroundColor(MyCrewColors.textSecondary)
+                                .multilineTextAlignment(.center)
+                        } else {
+                            Text("Essayez d'ajuster vos filtres")
+                                .font(.subheadline)
+                                .foregroundColor(MyCrewColors.textSecondary)
+                                .multilineTextAlignment(.center)
+                        }
                     }
                     .padding()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -237,7 +291,7 @@ struct FilterTag: View {
                             Section(header: Text(letter).font(.headline).foregroundColor(MyCrewColors.accent)) {
                                 ForEach(contactsInGroup) { contact in
                                     NavigationLink(destination: ContactDetailView(contact: contact)) {
-                                        ContactRowView(contact: contact)
+                                        ContactRowView(contact: contact, searchText: searchText)
                                     }
                                     .listRowBackground(MyCrewColors.cardBackground)
                                 }
@@ -272,6 +326,37 @@ struct FilterTag: View {
         }
     }
     
+    // NOUVELLE FONCTION : Logique de recherche
+    private func matchesSearch(contact: Contact, searchText: String) -> Bool {
+        let search = searchText.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !search.isEmpty else { return true }
+        
+        // Recherche dans le nom (n'importe où dans le nom)
+        if contact.name.lowercased().contains(search) {
+            return true
+        }
+        
+        // Recherche dans le métier
+        if contact.jobTitle.lowercased().contains(search) {
+            return true
+        }
+        
+        // Recherche dans les lieux (pays et régions)
+        for location in contact.locations {
+            // Recherche dans le pays
+            if location.country.lowercased().contains(search) {
+                return true
+            }
+            
+            // Recherche dans la région si elle existe
+            if let region = location.region, region.lowercased().contains(search) {
+                return true
+            }
+        }
+        
+        return false
+    }
+    
     private func getFilterDescription() -> String {
         var description: [String] = []
         
@@ -295,6 +380,10 @@ struct FilterTag: View {
         
         if !attributes.isEmpty {
             description.append("Critères: \(attributes.joined(separator: ", "))")
+        }
+        
+        if !searchText.isEmpty {
+            description.append("Recherche: \"\(searchText)\"")
         }
         
         return description.isEmpty ? "Tous les contacts" : description.joined(separator: " • ")
@@ -423,10 +512,17 @@ struct FilterModalView: View {
     }
 }
 
-// MARK: - ContactRowView
+// MARK: - ContactRowView (modifiée pour highlight la recherche)
 
 struct ContactRowView: View {
     let contact: Contact
+    let searchText: String
+    
+    // Initializer avec valeur par défaut pour la compatibilité
+    init(contact: Contact, searchText: String = "") {
+        self.contact = contact
+        self.searchText = searchText
+    }
     
     private func getDepartmentIcon(for jobTitle: String) -> String? {
         for (department, jobs) in JobTitles.departments {
@@ -449,12 +545,60 @@ struct ContactRowView: View {
         return nil
     }
     
+    // Fonction pour surligner les termes de recherche
+    private func highlightedText(_ text: String, searchTerm: String) -> Text {
+        guard !searchTerm.isEmpty else {
+            return Text(text).foregroundColor(MyCrewColors.textSecondary)
+        }
+        
+        let lowercasedText = text.lowercased()
+        let lowercasedSearch = searchTerm.lowercased()
+        
+        if lowercasedText.contains(lowercasedSearch) {
+            var result = Text("")
+            let ranges = lowercasedText.ranges(of: lowercasedSearch)
+            
+            var lastEnd = text.startIndex
+            for range in ranges {
+                // Partie avant le match
+                if lastEnd < range.lowerBound {
+                    let beforeMatch = String(text[lastEnd..<range.lowerBound])
+                    result = result + Text(beforeMatch).foregroundColor(MyCrewColors.textSecondary)
+                }
+                
+                // Partie matchée (surlignée)
+                let matchedPart = String(text[range])
+                result = result + Text(matchedPart)
+                    .foregroundColor(MyCrewColors.accent)
+                    .fontWeight(.semibold)
+                
+                lastEnd = range.upperBound
+            }
+            
+            // Partie après le dernier match
+            if lastEnd < text.endIndex {
+                let afterMatch = String(text[lastEnd...])
+                result = result + Text(afterMatch).foregroundColor(MyCrewColors.textSecondary)
+            }
+            
+            return result
+        } else {
+            return Text(text).foregroundColor(MyCrewColors.textSecondary)
+        }
+    }
+    
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-                Text(contact.name)
-                    .font(.headline)
-                    .foregroundColor(MyCrewColors.textPrimary)
+                // Nom avec surlignage
+                if !searchText.isEmpty && contact.name.lowercased().contains(searchText.lowercased()) {
+                    highlightedText(contact.name, searchTerm: searchText)
+                        .font(.headline)
+                } else {
+                    Text(contact.name)
+                        .font(.headline)
+                        .foregroundColor(MyCrewColors.textPrimary)
+                }
                 
                 HStack(spacing: 8) {
                     if let icon = getDepartmentIcon(for: contact.jobTitle) {
@@ -462,10 +606,28 @@ struct ContactRowView: View {
                             .font(.caption)
                             .foregroundColor(MyCrewColors.accent)
                     }
-                    Text("\(contact.jobTitle) • \(contact.city)")
-                        .font(.subheadline)
-                        .foregroundColor(MyCrewColors.textSecondary)
+                    
+                    // Métier et lieu avec surlignage
+                    HStack(spacing: 0) {
+                        if !searchText.isEmpty && contact.jobTitle.lowercased().contains(searchText.lowercased()) {
+                            highlightedText(contact.jobTitle, searchTerm: searchText)
+                        } else {
+                            Text(contact.jobTitle)
+                                .foregroundColor(MyCrewColors.textSecondary)
+                        }
+                        
+                        Text(" • ")
+                            .foregroundColor(MyCrewColors.textSecondary)
+                        
+                        if !searchText.isEmpty && contact.city.lowercased().contains(searchText.lowercased()) {
+                            highlightedText(contact.city, searchTerm: searchText)
+                        } else {
+                            Text(contact.city)
+                                .foregroundColor(MyCrewColors.textSecondary)
+                        }
+                    }
                 }
+                .font(.subheadline)
             }
             Spacer()
             
@@ -476,5 +638,21 @@ struct ContactRowView: View {
             }
         }
         .padding(.vertical, 4)
+    }
+}
+
+// Extension pour trouver les ranges d'une substring
+extension String {
+    func ranges(of substring: String, options: CompareOptions = []) -> [Range<Index>] {
+        var ranges: [Range<Index>] = []
+        var searchStartIndex = self.startIndex
+        
+        while searchStartIndex < self.endIndex,
+              let range = self.range(of: substring, options: options, range: searchStartIndex..<self.endIndex) {
+            ranges.append(range)
+            searchStartIndex = range.upperBound
+        }
+        
+        return ranges
     }
 }
