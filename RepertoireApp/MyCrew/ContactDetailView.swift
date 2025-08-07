@@ -9,21 +9,31 @@ struct ContactDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
+                // En-tête avec nom et QR Code
                 HStack {
-                    Text(contact.name)
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .foregroundColor(MyCrewColors.textPrimary)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(contact.name)
+                            .font(.largeTitle)
+                            .fontWeight(.bold)
+                            .foregroundColor(MyCrewColors.textPrimary)
+                        
+                        Text(contact.jobTitle)
+                            .font(.headline)
+                            .foregroundColor(MyCrewColors.accent)
+                    }
+                    
                     Spacer()
-                    if contact.isFavorite {
-                        Image(systemName: "star.fill")
-                            .foregroundColor(MyCrewColors.favoriteStar)
+                    
+                    VStack(spacing: 8) {
+                        if contact.isFavorite {
+                            Image(systemName: "star.fill")
+                                .foregroundColor(MyCrewColors.favoriteStar)
+                        }
+                        
+                        // QR Code miniature (NOUVEAUTÉ)
+                        QRCodeMiniature(contact: contact)
                     }
                 }
-                
-                Text(contact.jobTitle)
-                    .font(.headline)
-                    .foregroundColor(MyCrewColors.accent)
                 
                 Divider()
                 

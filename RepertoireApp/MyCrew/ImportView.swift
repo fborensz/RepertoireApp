@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 import UniformTypeIdentifiers
 import Foundation
+import AVFoundation
 
 struct ImportView: View {
     @Environment(\.dismiss) private var dismiss
@@ -13,6 +14,7 @@ struct ImportView: View {
     @State private var showingDuplicateAlert = false
     @State private var duplicateContacts: [String] = []
     @State private var pendingImportData: (url: URL, contacts: [ContactExportData.ContactData])? = nil
+    @State private var showingQRScanner = false
     
     struct ImportResult {
         let success: Bool
@@ -33,14 +35,44 @@ struct ImportView: View {
                         .fontWeight(.semibold)
                         .foregroundColor(MyCrewColors.textPrimary)
                     
-                    Text("Sélectionnez un fichier exporté depuis MyCrew ou depuis l'app Contacts iOS")
+                    Text("Scannez un QR Code MyCrew ou sélectionnez un fichier")
                         .font(.body)
                         .foregroundColor(MyCrewColors.textSecondary)
                         .multilineTextAlignment(.center)
                 }
                 
+                // Bouton Scanner QR Code
+                Button {
+                    showingQRScanner = true
+                } label: {
+                    HStack {
+                        Image(systemName: "qrcode.viewfinder")
+                        Text("Scanner un QR Code MyCrew")
+                    }
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(MyCrewColors.accent)
+                    .cornerRadius(10)
+                }
+                
+                // Séparateur
+                HStack {
+                    Rectangle()
+                        .frame(height: 1)
+                        .foregroundColor(MyCrewColors.textSecondary.opacity(0.3))
+                    Text("ou")
+                        .font(.subheadline)
+                        .foregroundColor(MyCrewColors.textSecondary)
+                        .padding(.horizontal)
+                    Rectangle()
+                        .frame(height: 1)
+                        .foregroundColor(MyCrewColors.textSecondary.opacity(0.3))
+                }
+                
                 VStack(spacing: 12) {
-                    Text("Formats supportés :")
+                    Text("Importer un fichier :")
                         .font(.headline)
                         .foregroundColor(MyCrewColors.textPrimary)
                     
@@ -125,6 +157,17 @@ struct ImportView: View {
         ) { result in
             handleFileImport(result)
         }
+        .fullScreenCover(isPresented: $showingQRScanner) {
+            QRCodeScannerView(
+                onQRCodeScanned: { qrString in
+                    showingQRScanner = false
+                    handleQRCodeScanned(qrString)
+                },
+                onDismiss: {
+                    showingQRScanner = false
+                }
+            )
+        }
         .alert("Import", isPresented: $showingAlert) {
             Button("OK") { }
         } message: {
@@ -141,6 +184,86 @@ struct ImportView: View {
             }
         } message: {
             Text("Ces contacts existent déjà dans votre liste :\n\(duplicateContacts.joined(separator: "\n"))\n\nÊtes-vous sûr de vouloir continuer l'import ? Cela écrasera les anciens contacts et des informations risquent d'être perdues.")
+        }
+    }
+    
+    // NOUVELLE FONCTION : Gestion du QR Code scanné
+    private func handleQRCodeScanned(_ qrString: String) {
+        guard let contactData = QRCodeGenerator.shared.parseQRCodeData(qrString) else {
+            importResult = ImportResult(
+                success: false,
+                contactsImported: 0,
+                message: "QR Code non reconnu ou invalide"
+            )
+            return
+        }
+        
+        // Vérifier les doublons
+        do {
+            let fetchDescriptor = FetchDescriptor<Contact>()
+            let existingContacts = try context.fetch(fetchDescriptor)
+            let existingNames = Set(existingContacts.map { $0.name.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) })
+            
+            let contactKey = contactData.name.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+            
+            if existingNames.contains(contactKey) {
+                duplicateContacts = [contactData.name]
+                pendingImportData = (URL(fileURLWithPath: "qr_code"), [contactData])
+                showingDuplicateAlert = true
+            } else {
+                importQRContact(contactData)
+            }
+        } catch {
+            importResult = ImportResult(
+                success: false,
+                contactsImported: 0,
+                message: "Erreur lors de la vérification des doublons"
+            )
+        }
+    }
+    
+    private func importQRContact(_ contactData: ContactExportData.ContactData) {
+        do {
+            // Créer le nouveau contact
+            let newContact = Contact(
+                name: contactData.name,
+                jobTitle: contactData.jobTitle,
+                phone: contactData.phone,
+                email: contactData.email,
+                notes: contactData.notes,
+                isFavorite: false
+            )
+            
+            var workLocations: [WorkLocation] = []
+            for locationData in contactData.locations {
+                let workLocation = WorkLocation(
+                    country: locationData.country,
+                    region: locationData.region,
+                    isLocalResident: locationData.isLocalResident,
+                    hasVehicle: locationData.hasVehicle,
+                    isHoused: locationData.isHoused,
+                    isPrimary: locationData.isPrimary
+                )
+                context.insert(workLocation)
+                workLocations.append(workLocation)
+            }
+            
+            newContact.locations = workLocations
+            context.insert(newContact)
+            try context.save()
+            
+            importResult = ImportResult(
+                success: true,
+                contactsImported: 1,
+                message: "Contact importé depuis QR Code !"
+            )
+            
+        } catch {
+            importResult = ImportResult(
+                success: false,
+                contactsImported: 0,
+                message: "Erreur lors de l'import : \(error.localizedDescription)"
+            )
         }
     }
     
@@ -287,7 +410,7 @@ struct ImportView: View {
         }
     }
     
-    // Parser pour fichiers vCard (nouveauté)
+    // Parser pour fichiers vCard
     private func parseVCardData(_ data: Data) throws -> [ContactExportData.ContactData] {
         guard let content = String(data: data, encoding: .utf8) else {
             throw ImportError.invalidFormat
